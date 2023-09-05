@@ -16,7 +16,7 @@ import oy.interact.tira.util.JSONConverter;
 
 public abstract class CoderTestBase {
 
-	Coder [] coderArray;
+	Coder[] coderArray;
 
 	static final int[] coderCounts = {
 			100,
@@ -49,36 +49,37 @@ public abstract class CoderTestBase {
 		return JSONConverter.codersFromJSONArray(array);
 	}
 
-	void isInOrder(Coder [] array, Comparator<Coder> order) throws ArrayStoreException, NullPointerException {
+	void isInOrder(Coder[] array, Comparator<Coder> order) throws ArrayStoreException, NullPointerException {
 		for (int index = 1; index < array.length; index++) {
-			if (array[index-1] == null || array[index] == null) {
+			if (array[index - 1] == null || array[index] == null) {
 				throw new NullPointerException("Null found in array");
 			}
-			if (order.compare(array[index-1], array[index]) > 0) {
+			if (order.compare(array[index - 1], array[index]) > 0) {
 				throw new ArrayStoreException();
 			}
 		}
 	}
 
-	void isInOrder(Coder [] array) throws ArrayStoreException, NullPointerException {
+	void isInOrder(Coder[] array) throws ArrayStoreException, NullPointerException {
 		for (int index = 1; index < array.length; index++) {
-			if (array[index-1] == null || array[index] == null) {
+			if (array[index - 1] == null || array[index] == null) {
 				throw new NullPointerException("Null found in array");
 			}
-			if (array[index-1].compareTo(array[index]) > 0) {
+			if (array[index - 1].compareTo(array[index]) > 0) {
 				throw new ArrayStoreException();
 			}
 		}
 	}
 
-	void isInOrder(Coder [] array, int from, int to, Comparator<Coder> order) throws ArrayStoreException, NullPointerException {
+	void isInOrder(Coder[] array, int from, int to, Comparator<Coder> order)
+			throws ArrayStoreException, NullPointerException {
 		for (int index = from + 1; index < to; index++) {
-			if (array[index-1] == null || array[index] == null) {
-				System.out.format("*** ERROR null in array in %d or %d%n", index-1, index);
+			if (array[index - 1] == null || array[index] == null) {
+				System.out.format("*** ERROR null in array in %d or %d%n", index - 1, index);
 				throw new NullPointerException("Null found in array");
 			}
-			if (order.compare(array[index-1], array[index]) > 0) {
-				System.out.format("*** ERROR wrong order in array in %d or %d%n", index-1, index);
+			if (order.compare(array[index - 1], array[index]) > 0) {
+				System.out.format("*** ERROR wrong order in array in %d or %d%n", index - 1, index);
 				throw new ArrayStoreException();
 			}
 		}
