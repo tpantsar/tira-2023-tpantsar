@@ -79,14 +79,6 @@ public class Algorithms {
 
    public static <T> void reverse(T[] array) {
       reverse(array, 0, array.length);
-
-      /*
-       * int i = 0;
-       * while (i < array.length / 2) {
-       * swap(array, i, array.length - i - 1);
-       * i++;
-       * }
-       */
    }
 
    ///////////////////////////////////////////
