@@ -187,7 +187,7 @@ public class Coder implements Comparable<Coder> {
 	 * in containers having the same name (as happens in real world), but still
 	 * can identify them as different Coders using the Coder.id.
 	 * 
-	 * TODO: Implement compareTo so that the order of coders ordered by using this methos
+	 * TODO: REFINE THIS using toString! Implement compareTo so that the order of coders ordered by using this methos
 	 * will be natural order. Meaning, alphabetical order A...Ö (by lastname-firstname order).
 	 */
 	@Override
@@ -229,7 +229,8 @@ public class Coder implements Comparable<Coder> {
 		return 0;
 	}
 
-	/*public int compareStrings(String str1, String str2, int length) {
+	/*
+	public int compareStrings(String str1, String str2, int length) {
 		int result = 0;
 		for (int i = 0; i < length; i++) {
 			if (str1.charAt(i) < str2.charAt(i)) {
@@ -240,7 +241,8 @@ public class Coder implements Comparable<Coder> {
 			}
 		}
 		return result;
-	}*/
+	}
+	*/
 
 	public int getLengthOfShorterString(String str1, String str2) {
 		if (str1.length() < str2.length()) {

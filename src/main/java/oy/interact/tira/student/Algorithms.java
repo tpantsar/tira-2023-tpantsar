@@ -28,18 +28,6 @@ public class Algorithms {
 
    public static <T extends Comparable<T>> void insertionSort(T[] array) {
       insertionSort(array, 0, array.length);
-
-      /*
-       * int i = 1, j;
-       * while (i < array.length) {
-       * j = i;
-       * while (j > 0 && array[j - 1].compareTo(array[j]) > 0) {
-       * swap(array, j, j - 1);
-       * j--;
-       * }
-       * i++;
-       * }
-       */
    }
 
    ///////////////////////////////////////////
@@ -62,7 +50,7 @@ public class Algorithms {
    //////////////////////////////////////////////////////////
 
    public static <T> void insertionSort(T[] array, Comparator<T> comparator) {
-      // TODO: Student, implement this.
+      insertionSort(array, 0, array.length, comparator);
    }
 
    ////////////////////////////////////////////////////////////
@@ -70,7 +58,14 @@ public class Algorithms {
    ////////////////////////////////////////////////////////////
 
    public static <T> void insertionSort(T[] array, int fromIndex, int toIndex, Comparator<T> comparator) {
-      // TODO: Student, implement this.
+      while (fromIndex < toIndex) {
+         int j = fromIndex;
+         while (j > 0 && comparator.compare(array[j - 1], array[j]) > 0) {
+            swap(array, j, j - 1);
+            j--;
+         }
+         fromIndex++;
+      }
    }
 
    ///////////////////////////////////////////
