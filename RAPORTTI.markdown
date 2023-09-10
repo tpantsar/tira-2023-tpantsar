@@ -96,6 +96,12 @@ Valmiiksi lajitellun taulukon kääntäminen päinvastaiseksi onnistuu nopeiten 
 
 ## 03-TASK
 
+<img src="images/binary_search_ascending.png" alt="Binary search ascending" width="1500"/>
+
+<img src="images/binary_search_descending.png" alt="Binary search descending" width="1500"/>
+
+
+
 ## 04-TASK
 
 ## 05-TASK
