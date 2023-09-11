@@ -117,7 +117,7 @@ public class Algorithms {
    // Recursive Binary search using a Comparator
    ///////////////////////////////////////////
 
-   public static <T> int binarySearch(T aValue, T[] fromArray, int fromIndex, int toIndex, Comparator<T> comparator) {
+   public static <T> int binarySearchRecursive(T aValue, T[] fromArray, int fromIndex, int toIndex, Comparator<T> comparator) {
       if (fromIndex < 0 || fromIndex >= fromArray.length || fromIndex > toIndex) {
          return -1; // Invalid input range
       }
@@ -131,9 +131,9 @@ public class Algorithms {
       } else {
          int middle = fromIndex + (toIndex - fromIndex) / 2;
          if (comparator.compare(aValue, fromArray[middle]) == 0) {
-            return binarySearch(aValue, fromArray, fromIndex, middle, comparator); // recursion, low end
+            return binarySearchRecursive(aValue, fromArray, fromIndex, middle, comparator); // recursion, low end
          } else {
-            return binarySearch(aValue, fromArray, middle + 1, toIndex, comparator); // recursion, high end
+            return binarySearchRecursive(aValue, fromArray, middle + 1, toIndex, comparator); // recursion, high end
          }
       }
    }
