@@ -107,9 +107,8 @@ public class StackImplementation<E> implements StackInterface<E> {
 
     @Override
     public void clear() {
-        for (int i = 0; i < itemArray.length; i++) {
-            itemArray[i] = null;
-        }
+        itemArray = null;
+        capacity = DEFAULT_STACK_SIZE;
         currentIndex = -1;
     }
 }

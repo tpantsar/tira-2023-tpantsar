@@ -163,7 +163,55 @@ etunimen perusteella.
 
 ## 04-TASK
 
+Opin pinotietorakenteen toteutuksessa sen, miten IDE:t tarkistavat syntaksivirheitä lähdekoodista, esim. edellätoteutetun
+`ParenthesisChecker.java` mukaisesti. Koodieditorit varoittavat automaattisesti, jos koodista puuttuu avaavia tai sulkevia
+sulkuja tai jos ne ovat väärässä järjestyksessä.
+
+`StackImplementation.java` aikakompleksisuusvaatimuuksia piti jonkin verran korjata esim. `clear()` -metodin kohdalla.
+Lisäksi, haastavaa oli myös toteuttaa lainausmerkkien, rivinumeroiden ja sarakenumeroiden käsittely `checkParentheses` -metodissa.
+Ymmärsin periaatteen kuitenkin hyvin ja sulkujen tarkistaminen onnistui hyvin myös omien JSON ja Java -tiedostojen kanssa.
+
+Aikakompleksisuusvaatimukset pinotietorakenteen toteutuksessa täyttyvät, koska vain `push()` ja `toString` -metodit käyttävät
+silmukoita hyväkseen. Jos indeksi, johon viimeisin elementti on lisätty, ylittää pinon kapasiteetin `capacity`, niin tehdään reallokointi
+`reallocateArray`. Reallokoinnissa luodaan uusi taulukko-olio, tuplataan sen kapasiteetti vanhaan taulukkoon nähden ja
+lisätään vanhan taulukon elementit uuden taulukon alkuun for-silmukassa:
+```Java
+for (int i = 0; i <= currentIndex; i++) {
+    newArray[i] = itemArray[i];
+}
+```
+Tämän vuoksi `push()` -metodi on aikakompleksisuusluokaltaan `O(n)`, kun tehdään reallokointi.
+
+Myös `toString()` noudattaa aikakompleksisuusluokkaa `O(n)`, koska for-silmukassa erotetaan taulukon elementit pilkulla toisistaan:
+```Java
+for (int i = 0; i <= currentIndex; i++) {
+    builder.append(itemArray[i]);
+    if (i < currentIndex) {
+        builder.append(", ");
+    }
+}
+```
+Muut pinotietorakenteen metodit ovat aikakompleksisuusluokaltaan `O(1)`, koska niissä tehdään vain yksinkertaisia
+sijoitus- ja vertailuoperaatioita.
+
+Kokeilin, miten TIRACodersApp toimii, kun lainausmerkki puuttuu JSON-tiedostosta.
+Nähtävästi algoritmi osaa tunnistaa rivinumeron oikein, mutta sarakkeita laskiessa se väittää virheen olevan sarakkeessa 1587.
+Algoritmi myös tunnistaa virhetyypin oikein -> "Too few closing parentheses".
+Eli tässä tapauksessa lainausmerkkejä on liian vähän:
+
+<img src="images/04_task_faultyQuotationMarks.png" alt="Check json file 1" width="2000"/>
+
+Toisaalta, kun lainausmerkkejä on tiedostossa liikaa, tässä tapauksessa algoritmi väittää JSON-tiedoston olevan oikeellinen
+-> "JSON file test-village-coders.json is valid".
+Eli algoritmi ei ole oikeellinen, koska se ei tuota toivottua tulosta siihen, mitä pitäisi. Se antaa jokseenkin oikeita tuloksia riippuen siitä,
+missä kohtaa tekstiä ja kuinka paljon lainausmerkkejä puuttuu tai on liikaa. 
+Algoritmin toteutusta pitäisi muuttaa niin, että otetaan huomioon myös lainausmerkkien välissä olevat lainausmerkit.
+
+<img src="images/04_task_faultyQuotationMarks_okMessage.png" alt="Check json file 2" width="2000"/>
+
 ## 05-TASK
+
+
 
 ## 06-TASK
 
