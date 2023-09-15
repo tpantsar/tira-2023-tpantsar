@@ -2,7 +2,7 @@ package oy.interact.tira.student;
 
 import oy.interact.tira.util.QueueInterface;
 
-public class QueueImplementation<E> implements QueueInterface<E> {
+public class ArrayQueue<E> implements QueueInterface<E> {
 
     private static final int DEFAULT_QUEUE_SIZE = 10;
     private Object[] itemArray;
@@ -12,13 +12,13 @@ public class QueueImplementation<E> implements QueueInterface<E> {
     private int capacity;
 
     // Create queue with the default size
-    public QueueImplementation() {
+    public ArrayQueue() {
         // Call the constructor with size parameter with default size
         this(DEFAULT_QUEUE_SIZE);
     }
 
     // Create queue with the size of parameter capacity
-    public QueueImplementation(int capacity) {
+    public ArrayQueue(int capacity) {
         this.capacity = capacity;
         this.itemArray = new Object[capacity];
         this.head = 0;
@@ -122,13 +122,14 @@ public class QueueImplementation<E> implements QueueInterface<E> {
             int index = head;
             int counter = count;
             while (counter > 0) {
+                // Reset index to 0 if it is equal or greater than capacity to prevent ArrayIndexOutOfBoundsException
+                if (index >= capacity) {
+                    index = 0;
+                }
                 builder.append(itemArray[index]);
                 counter--;
                 if (counter > 0) {
                     builder.append(", ");
-                }
-                if (index >= capacity) {
-                    index = 0;
                 }
                 index++;
             }
