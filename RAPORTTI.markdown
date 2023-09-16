@@ -57,7 +57,9 @@ Jos sukunimet olivat samat, verrattiin etunimiä keskenään.
 * Valmiiksi nousevan järjestyksen omaava taulukko kannattaa **kääntää** (reverse), koska olioita/merkkijonoja ei
   tarvitse vertailla keskenään. Tarvitsee tehdä vain väliaikaisia muuttujia ja sijoitusoperaatioita.
 
+
 ## 02-TASK
+
 
 Opin tehtävän myötä Predicate-luokan toiminnallisuudesta ja miten sitä voi käyttää hakufunktioissa apuna.
 Myös se, miten Comparator ja Comparable -rajapinnat eroavat toisistaan, tuli tutuksi.
@@ -118,9 +120,11 @@ keskenään taulukossa.
 * Täyttö- ja hakualgoritmit vastaavat likimain aikakompleksisuusluokkaa `O(n^2)`, sillä lajittelun kesto kasvaa
   eksponentiaalisesti n:n koon kasvaessa -> 2^2 = 4, 10^2 = 100 jne.
 
+
 ## 03-TASK
 
-**------------------- HOX!!! Toteutin puolitushaun sekä iteratiivisesti, että rekursiivisesti -------------------**
+
+**------------------- HOX!!! TOTEUTIN PUOLITUSHAUN SEKÄ ITERATIIVISESTI, ETTÄ REKURSIIVISESTI -------------------**
 
 Binäärisen puolitushakualgoritmin toteutuksessa piti jonkin aikaa miettiä, miten metodin binarySearch saa palauttamaan
 arvon -1,
@@ -161,7 +165,9 @@ haettiin -> "PhoneBookArray: Fast search took 0 ms".
 Koko nimellä hakeminen toimii vain silloin, kun taulukko on lajiteltu nousevaan tai laskevaan järjestykseen suku- ja
 etunimen perusteella.
 
+
 ## 04-TASK
+
 
 Opin pinotietorakenteen toteutuksessa sen, miten IDE:t tarkistavat syntaksivirheitä lähdekoodista, esim. edellätoteutetun
 `ParenthesisChecker.java` mukaisesti. Koodieditorit varoittavat automaattisesti, jos koodista puuttuu avaavia tai sulkevia
@@ -209,14 +215,60 @@ Algoritmin toteutusta pitäisi muuttaa niin, että otetaan huomioon myös lainau
 
 <img src="images/04_task_faultyQuotationMarks_okMessage.png" alt="Check json file 2" width="2000"/>
 
+
 ## 05-TASK
 
+
+**------------------- HOX!!! TOTEUTIN JONOTIETORAKENTEESTA SEKÄ TAULUKKOVERSION, ETTÄ LINKITETYN LISTAN -------------------**
+
+Mielestäni taulukkoversion toteutus jonotietorakenteista oli helpompi ja yksinkertaisempi, verrattuna linkitettyyn listaan. Haastetta toi mm. linkitetyn listan solmujen hallinta.
+
+Linkitetyn listan etuna on se, että reallokointia ei tarvitse tehdä, kun uusia elementtejä lisätään listaan. Ainoana rajoitteena on siis tietokoneen käyttämän RAM-muistin määrä. Koodissa linkitetyn listan maksimikooksi on määritelty Integer.MAX_VALUE, eli suurin mahdollinen kokonaislukumuuttujan arvo. Linkitetty lista huolehtii siis itse muistin lisäämisestä tai vähentämisestä.
+
+Linkitetty lista häviää aikakompleksisuudeltaan ja tehokkuudeltaan selvästi taulukkototeutukseen verrattuna, isojen tietorakenteiden kanssa.
+Syynä on se, että solmujen välisten yhteyksien ylläpitäminen kuluttaa paljon keskusmuistia, koska niiden välillä tallennetaan osoittimia (pointer) päästäkseen seuraavaan solmuun. Vaikka nykyisissä tietokoneissa keskusmuistia on jo riittävästi, vastaan tulee kuitenkin suoritusaika, kun käsitellään suuria tietomääriä linkitetyn listan avulla.
+Artikkelissa "RIP Linked List, Sonntag & Colnet (2023), https://arxiv.org/pdf/2306.06942.pdf" mainitaan myös, että linkitetyn listan hitaus perustuu siihen, että esim. viitatessa satunnaiseen listamuotoisen testidatan elementtiin (solmuun), se vaatii paljon muistia. Listan solmut täytyy siis käsitellä järjestyksessä, joko alusta tai lopusta lähtien, kunnes löydetään haluttu elementti. Testi perustuu Bjarne Stroustrupin muunneltuun suorituskykytestiin, jossa mitataan aikakompleksisuutta elementtien lisäämisessä suureen tietorakenteeseen (taulukkoon). Kappaleen 4. kuvaajasta **(Fig. 9)** nähdään, kuinka linkitetyn listan (LinkedList) aikakompleksisuus on selvästi heikompi, kuin taulukkototeutuksen (ArrayBlock).
+
+Kun taulukkototeutuksessa pusketaan elementtejä listaan enqueue-metodia käyttäen, reallokointi-metodia `reallocateArray()` kutsutaan jos taulukon sisältämien elementtien määrä `count` saavuttaa tai ylittää sen kapasiteetin.
+
+**Taulukkototeutus, edut ja haitat:**
+
+(+) Kuluttaa vähemmän muistia.
+
+(+) Yksinkertaisempi toteuttaa.
+
+(+) Satunnaiseen elementtiin viittaaminen on nopeaa, koska elementit on tallennettu vierekkäin jonoon, aikakompleksisuus `O(1)`.
+
+(-) Reallokointi voi olla aikaavievä operaatio, jos taulukon kapasiteetti ylittyy. Tämä riippuu taulukon koosta n, jolloin aikakompleksisuus on
+`O(n)`. 
+
+**Linkitetty lista, edut ja haitat:**
+
+(+) Dynaaminen koko, kätevämpi pienten tietorakenteiden kanssa. Ei tarvitse reallokointia.
+
+(+) Ei varaa ylimääräistä muistia käyttöönsä, toisin kuin reallokointi taulukkototeutuksessa.
+
+(+) Elementtien lisääminen ja poistaminen nopeaa, aikakompleksisuus `O(1)`.
+
+(-) Viittaus satunnaisiin elementteihin hidasta, koska lista täytyy käydä läpi solmujen kautta. Aikakompleksisuus `O(k)`, jossa `k` vastaa haetun elementin sijaintia joko listan alusta tai lopusta luettuna.
 
 
 ## 06-TASK
 
+
+
+
+
 ## 07-TASK
 
+
+
+
+
 ## 08-TASK
+
+
+
+
 
 ## 09-TASK
