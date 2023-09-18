@@ -187,62 +187,38 @@ public class Coder implements Comparable<Coder> {
 	 * in containers having the same name (as happens in real world), but still
 	 * can identify them as different Coders using the Coder.id.
 	 * 
-	 * TODO: REFINE THIS using toString! Implement compareTo so that the order of coders ordered by using this methos
+	 * Implement compareTo so that the order of coders ordered by using this method
 	 * will be natural order. Meaning, alphabetical order A...Ö (by lastname-firstname order).
 	 */
 	@Override
 	public int compareTo(Coder another) {
-		int lengthOfShorterString = getLengthOfShorterString(this.lastName, another.lastName);
+		String thisCoder = this.toString();
+		String anotherCoder = another.toString();
+		int lengthOfShorterString = getLengthOfShorterString(thisCoder, anotherCoder);
 
-		// Compare lastname characters one by one
+		// Compare coder characters one by one: lastName -> firstName -> coderName
 		for (int i = 0; i < lengthOfShorterString; i++) {
-			if (this.lastName.charAt(i) < another.lastName.charAt(i)) {
+			if (thisCoder.charAt(i) < anotherCoder.charAt(i)) {
 				return -1;
 			}
-			if (this.lastName.charAt(i) > another.lastName.charAt(i)) {
+			if (thisCoder.charAt(i) > anotherCoder.charAt(i)) {
 				return 1;
 			}
 		}
 
-		// If lastnames are exactly the same, compare firstname characters one by one
-		if (this.lastName.equals(another.lastName)) {
-			lengthOfShorterString = getLengthOfShorterString(this.firstName, another.firstName);
-			for (int i = 0; i < lengthOfShorterString; i++) {
-				if (this.firstName.charAt(i) < another.firstName.charAt(i)) {
-					return -1;
-				}
-				if (this.firstName.charAt(i) > another.firstName.charAt(i)) {
-					return 1;
-				}
-			}
-		} else {
-			// If lastnames are partially the same, figure out which one is longer
-			// E.g. "Kirk".compareTo("Kirkonpelto") = -1 (-7) and
-			// "Kirkonpelto".compareTo("Kirk") = 1
-			if (this.lastName.length() < another.lastName.length()) {
-				return -1;
-			} else {
-				return 1;
-			}
+		// If coder names are partially same but other is longer eg.
+		// "coderNameStringExample" vs. "coderNameStringExampleLonger"
+		if (thisCoder.length() < anotherCoder.length()) {
+			// "".compareTo("a") = -1
+			return -1;
+		} else if (thisCoder.length() > anotherCoder.length()) {
+			// "a".compareTo("") = 1
+			return 1;
 		}
-		// Lastname and Firstname are exactly the same
+
+		// return 0 if Coder objects are exactly the same (lastName, firstName and coderName)
 		return 0;
 	}
-
-	/*
-	public int compareStrings(String str1, String str2, int length) {
-		int result = 0;
-		for (int i = 0; i < length; i++) {
-			if (str1.charAt(i) < str2.charAt(i)) {
-				result = -1;
-			}
-			if (str1.charAt(i) > str2.charAt(i)) {
-				result = 1;
-			}
-		}
-		return result;
-	}
-	*/
 
 	public int getLengthOfShorterString(String str1, String str2) {
 		if (str1.length() < str2.length()) {

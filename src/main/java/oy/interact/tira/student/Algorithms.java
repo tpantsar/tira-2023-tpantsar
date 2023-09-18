@@ -165,29 +165,29 @@ public class Algorithms {
    // Partition with Comparable interface
    private static <T extends Comparable<T>> int partition(T[] array, int fromIndex, int toIndex) {
       T pivotValue = array[toIndex - 1];
-      int i = fromIndex - 1;
+      int i = fromIndex;
       for (int j = fromIndex; j < toIndex - 1; j++) {
          if (array[j].compareTo(pivotValue) < 0) {
-            i++;
             swap(array, i, j);
+            i++;
          }
       }
-      swap(array, i + 1, toIndex - 1);
-      return i + 1;
+      swap(array, i, toIndex - 1);
+      return i;
    }
 
    // Partition using Comparator
    private static <T> int partition(T[] array, int fromIndex, int toIndex, Comparator<T> comparator) {
-      T pivotValue = array[toIndex];
-      int i = fromIndex - 1;
-      for (int j = fromIndex; j < toIndex; j++) {
+      T pivotValue = array[toIndex - 1];
+      int i = fromIndex;
+      for (int j = fromIndex; j < toIndex - 1; j++) {
          if (comparator.compare(array[j], pivotValue) < 0) {
-            i++;
             swap(array, i, j);
+            i++;
          }
       }
-      swap(array, i + 1, toIndex);
-      return i + 1;
+      swap(array, i, toIndex - 1);
+      return i;
    }
 
    private static <T extends Comparable<T>> void quickSort(T[] array, int fromIndex, int toIndex) {
