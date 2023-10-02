@@ -164,58 +164,109 @@ public class Algorithms {
 
    // Partition with Comparable interface
    private static <T extends Comparable<T>> int partition(T[] array, int fromIndex, int toIndex) {
-      T pivotValue = array[toIndex - 1];
-      int i = fromIndex;
-      for (int j = fromIndex; j < toIndex - 1; j++) {
-         if (array[j].compareTo(pivotValue) < 0) {
-            swap(array, i, j);
+      // Pivot value is -> T pivotValue = array[toIndex];
+      int i = fromIndex - 1;
+      for (int j = fromIndex; j <= toIndex - 1; j++) {
+         if (array[j].compareTo(array[toIndex]) <= 0) {
             i++;
+            swap(array, i, j);
          }
       }
-      swap(array, i, toIndex - 1);
-      return i;
+      swap(array, i + 1, toIndex);
+      return i + 1;
    }
 
    // Partition using Comparator
    private static <T> int partition(T[] array, int fromIndex, int toIndex, Comparator<T> comparator) {
-      T pivotValue = array[toIndex - 1];
-      int i = fromIndex;
-      for (int j = fromIndex; j < toIndex - 1; j++) {
-         if (comparator.compare(array[j], pivotValue) < 0) {
-            swap(array, i, j);
+      // Pivot value is -> T pivotValue = array[toIndex];
+      int i = fromIndex - 1;
+      for (int j = fromIndex; j <= toIndex - 1; j++) {
+         if (comparator.compare(array[j], array[toIndex]) <= 0) {
             i++;
+            swap(array, i, j);
          }
       }
-      swap(array, i, toIndex - 1);
-      return i;
+      swap(array, i + 1, toIndex);
+      return i + 1;
    }
 
-   private static <T extends Comparable<T>> void quickSort(T[] array, int fromIndex, int toIndex) {
+   private static <T extends Comparable<T>> void quickSortRecursive(T[] array, int fromIndex, int toIndex) {
       if (fromIndex < toIndex) {
          int partitionIndex = partition(array, fromIndex, toIndex);
-         quickSort(array, fromIndex, partitionIndex);
-         quickSort(array, partitionIndex + 1, toIndex);
+         quickSortRecursive(array, fromIndex, partitionIndex - 1);
+         quickSortRecursive(array, partitionIndex + 1, toIndex);
       }
    }
 
-   private static <T> void quickSort(T[] array, int fromIndex, int toIndex, Comparator<T> comparator) {
+   private static <T> void quickSortRecursive(T[] array, int fromIndex, int toIndex, Comparator<T> comparator) {
       if (fromIndex < toIndex) {
          int partitionIndex = partition(array, fromIndex, toIndex, comparator);
-         quickSort(array, fromIndex, partitionIndex, comparator);
-         quickSort(array, partitionIndex + 1, toIndex, comparator);
+         quickSortRecursive(array, fromIndex, partitionIndex - 1, comparator);
+         quickSortRecursive(array, partitionIndex + 1, toIndex, comparator);
+      }
+   }
+
+   private static <T extends Comparable<T>> void quickSortIterative(T[] array, int fromIndex, int toIndex) {
+      StackImplementation<Integer> stack = new StackImplementation<>(toIndex - fromIndex + 1);
+      stack.push(fromIndex);
+      stack.push(toIndex);
+
+      while (!stack.isEmpty()) {
+         int end = stack.pop();
+         int start = stack.pop();
+         int partitionIndex = partition(array, start, end);
+
+         // If there are elements on left side of pivot -> Push left side to stack
+         if (partitionIndex - 1 > start) {
+            stack.push(start);
+            stack.push(partitionIndex - 1);
+         }
+
+         // If there are elements on right side of pivot -> Push right side to stack
+         if (partitionIndex + 1 < end) {
+            stack.push(partitionIndex + 1);
+            stack.push(end);
+         }
+      }
+   }
+
+   public static <T> void quickSortIterative(T[] array, int fromIndex, int toIndex, Comparator<T> comparator) {
+      StackImplementation<Integer> stack = new StackImplementation<>(toIndex - fromIndex + 1);
+      stack.push(fromIndex);
+      stack.push(toIndex);
+
+      while (!stack.isEmpty()) {
+         int end = stack.pop();
+         int start = stack.pop();
+         int partitionIndex = partition(array, start, end, comparator);
+
+         // If there are elements on left side of pivot -> Push left side to stack
+         if (partitionIndex - 1 > start) {
+            stack.push(start);
+            stack.push(partitionIndex - 1);
+         }
+
+         // If there are elements on right side of pivot -> Push right side to stack
+         if (partitionIndex + 1 < end) {
+            stack.push(partitionIndex + 1);
+            stack.push(end);
+         }
       }
    }
 
    public static <E extends Comparable<E>> void fastSort(E[] array) {
-      quickSort(array, 0, array.length);
+      //quickSortIterative(array, 0, array.length - 1);
+      quickSortRecursive(array, 0, array.length - 1);
    }
 
    public static <E> void fastSort(E[] array, Comparator<E> comparator) {
-      quickSort(array, 0, array.length, comparator);
+      //quickSortIterative(array, 0, array.length - 1, comparator);
+      quickSortRecursive(array, 0, array.length - 1, comparator);
    }
 
    public static <E> void fastSort(E[] array, int fromIndex, int toIndex, Comparator<E> comparator) {
-      quickSort(array, fromIndex, toIndex, comparator);
+      //quickSortIterative(array, fromIndex, toIndex, comparator);
+      quickSortRecursive(array, fromIndex, toIndex, comparator);
    }
 
 }
