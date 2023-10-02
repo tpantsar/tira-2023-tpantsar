@@ -255,18 +255,18 @@ public class Algorithms {
    }
 
    public static <E extends Comparable<E>> void fastSort(E[] array) {
-      //quickSortIterative(array, 0, array.length - 1);
-      quickSortRecursive(array, 0, array.length - 1);
+      quickSortIterative(array, 0, array.length - 1);
+      //quickSortRecursive(array, 0, array.length - 1);
    }
 
    public static <E> void fastSort(E[] array, Comparator<E> comparator) {
-      //quickSortIterative(array, 0, array.length - 1, comparator);
-      quickSortRecursive(array, 0, array.length - 1, comparator);
+      quickSortIterative(array, 0, array.length - 1, comparator);
+      //quickSortRecursive(array, 0, array.length - 1, comparator);
    }
 
    public static <E> void fastSort(E[] array, int fromIndex, int toIndex, Comparator<E> comparator) {
-      //quickSortIterative(array, fromIndex, toIndex, comparator);
-      quickSortRecursive(array, fromIndex, toIndex, comparator);
+      quickSortIterative(array, fromIndex, toIndex, comparator);
+      //quickSortRecursive(array, fromIndex, toIndex, comparator);
    }
 
 }
