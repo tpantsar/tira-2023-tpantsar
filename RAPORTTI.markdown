@@ -41,7 +41,9 @@ Tarvittaessa käytä myös paremmin muotoiltuja taulukoita:
 
 Alaluvut jokaisen tehtävän raportille löydät alta.
 
+
 ## 01-TASK
+
 
 insertionSort-metodien tekeminen oli lopulta yksinkertaista, kun tajusi idean sen takana. Comparable-rajapinnan käyttö
 oli entuudestaan tuttua.
@@ -256,7 +258,58 @@ Kun taulukkototeutuksessa pusketaan elementtejä listaan enqueue-metodia käytt�
 ## 06-TASK
 
 
+**------------------- HOX!!! TOTEUTIN QUICKSORTIN SEKÄ ITERATIIVISESTI, ETTÄ REKURSIIVISESTI -------------------**
 
+> `Algorithms.fastSort` -metodeissa on funktiokutsut molempiin quicksort-toteutuksiin, joista toinen 
+> on kommentoitu pois.
+
+Rekursiivisen ja iteratiivisen quicksort -algoritmien toteutuksessa oli hieman haasteellista pitää muistin käyttö
+sellaisessa koossa, että ohjelma ei kaadu kesken lajittelun. Myös partitiointimetodin toteutusta piti miettiä jonkin
+aikaa, koska pivot-elementin valitseminen meni välillä väärin.
+Välillä algoritmi yritti viitata array-taulukon ulkopuolelle, koska `toIndex` oli liian suuri.
+
+Analysoin ja tein kaaviot sekä hitaasta, että nopeista lajittelualgoritmeista
+ ja `CodersFastComparatorTests` -testien perusteella.
+Taulukoissa on kuvaajat aineiston koon `Count` sekä lajittelun kokonaisajan `Sort (ms)`,
+että lajittelun keston per taulukon koko `Sort (ms/element)` suhteen.
+
+> Tässä käytettiin hidasta Insertion sort -lajittelualgoritmia `CodersSlowComparatorTests` -testissä:
+
+<img src="images/CodersSlowComparatorTests_sort.png" alt="CodersSlowComparatorTests" width="1500"/>
+
+> Näissä käytettiin nopeita quicksort -lajittelualgoritmeja `CodersFastComparatorTests` -testissä.
+> Sekä rekursiivinen, että iteratiivinen toteutus.
+> Lajittelun kokonaiskesto on likimain sama riippumatta siitä, kumpaa toteutusta käytettiin.
+
+<img src="images/CodersFastComparatorTests_sort.png" alt="CodersFastComparatorTests" width="1500"/>
+
+Insertion sort -lajittelussa kesti jopa 9 minuuttia, 100 000 elementin kohdalla.
+Quicksort -algoritmi puolestaan selviytyi 2 000 000 elementin kokoisesta aineistosta vain hieman yli 11 sekunnissa.
+* Insertion sort -algoritmin aikakompleksisuusluokka on `O(n^2)` eli neliöllinen,
+koska se käsittelee elementtejä kahdessa for-silmukassa.
+Jokainen taulukon elementti täytyy käydä erikseen läpi siitä lähtien, kun taulukossa vaihdetaan elementtien paikkaa keskenään `swap` -metodissa.
+Tämä tekee lisäyslajittelusta äärimmäisen hitaan, suurien aineistojen kohdalla.
+* Quicksort -algoritmin aikakompleksisuusluokka on `O(n*log n)`,
+koska aineisto jaetaan suunnilleen samankokoisiin osiin jokaisella rekursiotasolla.
+Jos taulukon järjestettävät alkiot ovat jo valmiiksi järjestyksessä, quicksort vaatii aikakompleksisuudeltaan `O(n^2)` lajittelua (worst-case scenario).
+
+Rekursiivisen ja iteratiivisen quicksort -toteutuksen **aikaerot** eivät juuri poikkea toisistaan.
+Toteutusten olennainen ero on siinä, että rekursiivinen algoritmi kutsuu itseään useita kertoja,
+kun taas iteratiivisessa toteutuksessa pysytään while-silmukassa ja kutsutaan partitiointimetodia sen sisällä.
+Iteratiivisessa toteutuksessa hyödynnetään erillistä pinotietorakennetta (tehtävän task_04 `StackImplementation` -luokassa),
+jossa käsiteltävän taulukon indeksejä pidetään muistissa. Tämän ansiosta kutsupinoa (call stack) ei tarvita taulukoiden ylläpitämiseen,
+toisin kuin rekursiivisessa toteutuksessa.
+
+TIRA Coders App nopeutui huomattavasti, kun lajittelu vaihdettiin nopeaan quicksort-algoritmiin.
+Kokonaiskesto esim. 50 000 elementin json-tiedoston lajittelulle nopeutui n. **4,5 -kertaisesti**.
+
+> Hidas Insertion sort -algoritmi Tira Coders Appissa. Aineistona 10 000 ja 50 000 elementin json-tiedostot:
+
+<img src="images/insertionSort_TIRACodersApp.png" alt="TIRA Coders Insertion sort" width="1500"/>
+
+> Nopea quicksort -algoritmi Tira Coders Appissa. Aineistona 10 000 ja 50 000 elementin json-tiedostot:
+
+<img src="images/quickSort_TIRACodersApp.png" alt="TIRA Coders Quicksort" width="1500"/>
 
 
 ## 07-TASK

@@ -167,7 +167,7 @@ public class Algorithms {
       // Pivot value is -> T pivotValue = array[toIndex];
       int i = fromIndex - 1;
       for (int j = fromIndex; j <= toIndex - 1; j++) {
-         if (array[j].compareTo(array[toIndex]) <= 0) {
+         if (array[j].compareTo(array[toIndex]) < 0) {
             i++;
             swap(array, i, j);
          }
@@ -176,12 +176,12 @@ public class Algorithms {
       return i + 1;
    }
 
-   // Partition using Comparator
+   // Partition using Comparator interface
    private static <T> int partition(T[] array, int fromIndex, int toIndex, Comparator<T> comparator) {
       // Pivot value is -> T pivotValue = array[toIndex];
       int i = fromIndex - 1;
       for (int j = fromIndex; j <= toIndex - 1; j++) {
-         if (comparator.compare(array[j], array[toIndex]) <= 0) {
+         if (comparator.compare(array[j], array[toIndex]) < 0) {
             i++;
             swap(array, i, j);
          }
@@ -255,18 +255,18 @@ public class Algorithms {
    }
 
    public static <E extends Comparable<E>> void fastSort(E[] array) {
-      quickSortIterative(array, 0, array.length - 1);
-      //quickSortRecursive(array, 0, array.length - 1);
+      //quickSortIterative(array, 0, array.length - 1);
+      quickSortRecursive(array, 0, array.length - 1);
    }
 
    public static <E> void fastSort(E[] array, Comparator<E> comparator) {
-      quickSortIterative(array, 0, array.length - 1, comparator);
-      //quickSortRecursive(array, 0, array.length - 1, comparator);
+      //quickSortIterative(array, 0, array.length - 1, comparator);
+      quickSortRecursive(array, 0, array.length - 1, comparator);
    }
 
    public static <E> void fastSort(E[] array, int fromIndex, int toIndex, Comparator<E> comparator) {
-      quickSortIterative(array, fromIndex, toIndex, comparator);
-      //quickSortRecursive(array, fromIndex, toIndex, comparator);
+      //quickSortIterative(array, fromIndex, toIndex - 1, comparator);
+      quickSortRecursive(array, fromIndex, toIndex - 1, comparator);
    }
 
 }

@@ -17,9 +17,7 @@ public class CoderFullNameComparator implements Comparator<Coder> {
      * @return
      */
     public int compare(Coder coder1, Coder coder2) {
-        String firstCoderFullName = coder1.getFullName();
-        String secondCoderFullName = coder2.getFullName();
-        return firstCoderFullName.compareTo(secondCoderFullName);
+        return coder1.getFullName().compareTo(coder2.getFullName());
     }
 
 }
