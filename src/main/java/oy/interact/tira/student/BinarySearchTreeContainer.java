@@ -4,15 +4,19 @@ import oy.interact.tira.util.Pair;
 import oy.interact.tira.util.TIRAKeyedOrderedContainer;
 import oy.interact.tira.util.Visitor;
 
+import javax.swing.tree.TreeNode;
 import java.util.Comparator;
 import java.util.function.Predicate;
 
 public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TIRAKeyedOrderedContainer<K, V> {
 
-    //TreeNode<K, V> root; // Root node of the tree, your private little helper class.
+    //TreeNode treeNode; // Root node of the tree, your private little helper class.
     private Node root = null;
     private int size; // Number of elements currently in the tree.
-    private Comparator<K> comparator;  // The comparator used to determine if new node will go to left or right subtree.
+    private int currentIndex = 0; // Keep track of the index
+
+    // The comparator used to determine if new node will go to left or right subtree.
+    private Comparator<K> comparator;
 
     // Constructor
     public BinarySearchTreeContainer(Comparator<K> comparator) {
@@ -35,17 +39,23 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
 
         // Utilize Comparable.compareTo method for comparing objects
         private void add(Node node) {
-            if (node.key.compareTo(this.key) < 0) {
-                if (this.leftChild == null) {
-                    this.leftChild = node;
-                } else {
-                    this.leftChild.add(node);
-                }
-            } else if (node.key.compareTo(this.key) > 0) {
-                if (this.rightChild == null) {
-                    this.rightChild = node;
-                } else {
-                    this.rightChild.add(node);
+            // If added value is identical in BST, update the node and remove duplicate values
+            if (this.value.equals(node.value)) {
+                this.key = node.key;
+                this.value = node.value;
+            } else {
+                if (node.key.compareTo(this.key) < 0) {
+                    if (this.leftChild == null) {
+                        this.leftChild = node;
+                    } else {
+                        this.leftChild.add(node);
+                    }
+                } else if (node.key.compareTo(this.key) > 0) {
+                    if (this.rightChild == null) {
+                        this.rightChild = node;
+                    } else {
+                        this.rightChild.add(node);
+                    }
                 }
             }
         }
@@ -63,6 +73,7 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
 
     @Override
     public void add(K key, V value) throws OutOfMemoryError, IllegalArgumentException {
+        // Check if one or both of the parameters are null
         if (key == null || value == null) {
             throw new IllegalArgumentException("Key or value cannot be null");
         }
@@ -85,7 +96,7 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
         if (result != null) {
             return result.value;
         } else {
-            return null;
+            return null; // Key not found
         }
     }
 
@@ -95,45 +106,46 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
     }
 
     @Override
-    // Haetaan predikaatin mukaisen hakukriteerin täyttävä arvo puusta.
     public V find(Predicate<V> searcher) {
-        return findInOrder(root, searcher);
+        // Haetaan predikaatin mukaisen hakukriteerin täyttävä arvo puusta
+        return findValueInOrder(root, searcher);
     }
 
-    private V findInOrder(Node node, Predicate<V> searcher) {
+    // Helper method for in-order traversal searching a value conforming to the predicate
+    private V findValueInOrder(Node node, Predicate<V> searcher) {
         if (node == null) {
             return null; // Value not found
         }
 
         // Traverse the left subtree
-        V leftResult = findInOrder(node.leftChild, searcher);
+        V leftResult = findValueInOrder(node.leftChild, searcher);
 
-        // Check if the current node's value satisfies the predicate
+        // Check if the current node's value matches with predicate
         if (searcher.test(node.value)) {
             return node.value; // Value found
         }
 
-        // If not found in the current node, return the result from the left subtree (if any)
         if (leftResult != null) {
             return leftResult;
         }
 
         // Traverse the right subtree
-        return findInOrder(node.rightChild, searcher);
+        return findValueInOrder(node.rightChild, searcher);
     }
 
     @Override
     public int size() {
-        size = calculateTreeSize(root);
+        size = getTreeSize(root);
         return size;
     }
 
-    private int calculateTreeSize(Node node) {
+    // Calculates size of the tree beginning from the node parameter
+    private int getTreeSize(Node node) {
         if (node == null) {
             return 0; // An empty tree has size 0
         }
 
-        return calculateTreeSize(node.leftChild) + calculateTreeSize(node.rightChild) + 1;
+        return getTreeSize(node.leftChild) + getTreeSize(node.rightChild) + 1;
     }
 
     @Override
@@ -157,128 +169,106 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
     public Pair<K, V>[] toArray() {
         Pair<K, V>[] resultArray = (Pair<K, V>[]) new Pair[size];
         int[] index = {0};
-        inOrderTraversal(root, resultArray, index);
+        toArrayInOrder(root, resultArray, index);
         return resultArray;
     }
 
-    // Helper method for in-order traversal and array population
-    private void inOrderTraversal(Node node, Pair<K, V>[] array, int[] index) {
+    // Helper method for in-order traversal and filling the array
+    private void toArrayInOrder(Node node, Pair<K, V>[] array, int[] index) {
         if (node == null) {
             return;
         }
-        inOrderTraversal(node.leftChild, array, index); // Left subtree
+        toArrayInOrder(node.leftChild, array, index); // Traverse the left subtree
         array[index[0]++] = new Pair<>(node.key, node.value);
-        inOrderTraversal(node.rightChild, array, index); // Right subtree
+        toArrayInOrder(node.rightChild, array, index); // Traverse the right subtree
     }
 
     @Override
     public int indexOf(K itemKey) {
-        int[] index = {0}; // Use an array to store the index, as it needs to be mutable
-        indexOfInOrder(root, itemKey, index);
-        return index[0];
+        currentIndex = 0;
+        return indexOfInOrder(root, itemKey);
     }
 
-    // Helper method for in-order traversal
-    private void indexOfInOrder(Node node, K itemKey, int[] index) {
+    // Helper method for finding the index of node's key
+    private int indexOfInOrder(Node node, K itemKey) {
         if (node == null) {
-            return;
+            return -1; // Key not found
         }
 
         // Traverse the left subtree
-        indexOfInOrder(node.leftChild, itemKey, index);
+        int leftIndex = indexOfInOrder(node.leftChild, itemKey);
 
-        // Compare the current node's key with the target key
-        if (node.key.compareTo(itemKey) == 0) {
-            // Found a node with the same key
-            index[0]++;
-            return; // Stop the traversal
-        } else if (node.key.compareTo(itemKey) < 0) {
-            // The current node's key is smaller, so increment the index
-            index[0]++;
+        if (leftIndex != -1) {
+            return leftIndex; // Key found in the left subtree
         }
 
-        // Traverse the right subtree
-        indexOfInOrder(node.rightChild, itemKey, index);
-    }
-
-    @Override
-    // Haetaan tietyssä indeksissä oleva avain-arvo -pari
-    public Pair<K, V> getIndex(int index) throws IndexOutOfBoundsException {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index is out of bounds");
-        }
-
-        //Pair<K, V>[] result = new Pair[1];
-
-        //inOrderTraversalForIndex(root, index, 0, result);
-        Pair<K, V> result = inOrderTraversalForIndex(root, index, 0);
-
-        return result;
-
-        //return result[0];
-        //return result[0];
-    }
-
-    // Helper method for in-order traversal
-    private Pair<K, V> inOrderTraversalForIndex(Node node, int targetIndex, int currentIndex) {
-        if (node == null) {
-            return null; // Value not found
-        }
-
-        // Traverse the left subtree
-        Pair<K, V> leftResult = inOrderTraversalForIndex(node.leftChild, targetIndex, currentIndex + 1);
-
-        // Check if the current node's index matches the target index
-        if (currentIndex == targetIndex) {
-            return new Pair<>(node.key, node.value); // Return the value and stop the traversal
+        // If the current node's key matches the target key, return the currentIndex
+        if (node.key.equals(itemKey)) {
+            return currentIndex;
         }
 
         currentIndex++;
 
-        if (leftResult != null) {
-            return leftResult; // Value found in the left subtree, return it
-        }
-
         // Traverse the right subtree
-        return inOrderTraversalForIndex(node.rightChild, targetIndex, currentIndex + 1);
+        return indexOfInOrder(node.rightChild, itemKey);
     }
 
     @Override
-    // Haetaan predikaatin mukaisen hakukriteerin täyttävä arvon indeksi eli järjestysnumero puusta.
-    public int findIndex(Predicate<V> searcher) {
-        Pair<K, V>[] array = toArray();
-
-        for (int i = 0; i < array.length; i++) {
-            if (searcher.test(array[i].getValue())) {
-                return i;
-            }
+    public Pair<K, V> getIndex(int index) throws IndexOutOfBoundsException {
+        // Haetaan tietyssä indeksissä oleva avain-arvo -pari
+        if (index < 0 || index >= getTreeSize(root)) {
+            throw new IllegalArgumentException("Index is out of bounds");
         }
-        return -1; // Index not found
+        return getIndexInOrder(root, index);
     }
 
-    // Helper method for in-order traversal (Predicate)
-    private void findIndexInOrder(Node node, Predicate<V> searcher, int[] index) {
+    // Helper method for finding key-value pair at the index
+    private Pair<K, V> getIndexInOrder(Node node, int index) {
         if (node == null) {
-            return;
+            return null;
+        }
+
+        // Traverse the left subtree (size of the root's left node)
+        int leftSize = getTreeSize(node.leftChild);
+
+        if (index < leftSize) {
+            return getIndexInOrder(node.leftChild, index);
+        } else if (index > leftSize) {
+            return getIndexInOrder(node.rightChild, index - leftSize - 1);
+        } else {
+            return new Pair<>(node.key, node.value);
+        }
+    }
+
+    @Override
+    public int findIndex(Predicate<V> searcher) {
+        // Haetaan predikaatin mukaisen hakukriteerin täyttävä arvon indeksi eli järjestysnumero puusta.
+        currentIndex = 0;
+        return findIndexInOrder(root, searcher);
+    }
+
+    // Helper method for finding index
+    private int findIndexInOrder(Node node, Predicate<V> searcher) {
+        if (node == null) {
+            return -1; // Index not found
         }
 
         // Traverse the left subtree
-        findIndexInOrder(node.leftChild, searcher, index);
+        int leftIndex = findIndexInOrder(node.leftChild, searcher);
 
-        // Test searcher with the node value
-        if (searcher.test(node.value)) {
-            if (index[0] == -1) {
-                index[0] = 0;
-            } else {
-                index[0]++; // Increment the index
-            }
-            return; // Stop the traversal
+        if (leftIndex != -1) {
+            return leftIndex; // Key found in the left subtree
         }
 
-        index[0]++;
+        // Check if the current node's index matches with predicate
+        if (searcher.test(node.value)) {
+            return currentIndex; // Index for the value found
+        }
+
+        currentIndex++;
 
         // Traverse the right subtree
-        findIndexInOrder(node.rightChild, searcher, index);
+        return findIndexInOrder(node.rightChild, searcher);
     }
 
     @Override
@@ -286,4 +276,3 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
 
     }
 }
-
