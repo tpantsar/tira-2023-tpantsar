@@ -4,7 +4,6 @@ import oy.interact.tira.util.Pair;
 import oy.interact.tira.util.TIRAKeyedOrderedContainer;
 import oy.interact.tira.util.Visitor;
 
-import javax.swing.tree.TreeNode;
 import java.util.Comparator;
 import java.util.function.Predicate;
 
@@ -216,28 +215,34 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
     @Override
     public Pair<K, V> getIndex(int index) throws IndexOutOfBoundsException {
         // Haetaan tietyssä indeksissä oleva avain-arvo -pari
-        if (index < 0 || index >= getTreeSize(root)) {
+        if (index < 0) {
             throw new IllegalArgumentException("Index is out of bounds");
         }
-        return getIndexInOrder(root, index);
+        currentIndex = 0;
+        return getKeyValueAtIndex(root, index);
     }
 
     // Helper method for finding key-value pair at the index
-    private Pair<K, V> getIndexInOrder(Node node, int index) {
+    private Pair<K, V> getKeyValueAtIndex(Node node, int index) {
         if (node == null) {
             return null;
         }
 
-        // Traverse the left subtree (size of the root's left node)
-        int leftSize = getTreeSize(node.leftChild);
+        // Traverse the left subtree
+        Pair<K, V> keyValuePair = getKeyValueAtIndex(node.leftChild, index);
 
-        if (index < leftSize) {
-            return getIndexInOrder(node.leftChild, index);
-        } else if (index > leftSize) {
-            return getIndexInOrder(node.rightChild, index - leftSize - 1);
-        } else {
+        if (keyValuePair != null) {
+            return keyValuePair;
+        }
+
+        if (currentIndex == index) {
             return new Pair<>(node.key, node.value);
         }
+
+        currentIndex++;
+
+        // Traverse the right subtree
+        return getKeyValueAtIndex(node.rightChild, index);
     }
 
     @Override
