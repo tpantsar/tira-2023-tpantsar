@@ -4,7 +4,7 @@ import oy.interact.tira.util.QueueInterface;
 
 public class LinkedListQueue<E> implements QueueInterface<E> {
 
-    private class Node<T> {
+    private static class Node<T> {
         T element; // The element inside node
         Node<T> next; // Next element in node
 
@@ -16,7 +16,6 @@ public class LinkedListQueue<E> implements QueueInterface<E> {
     private Node<E> head; // End of the queue
     private Node<E> tail; // Start of the queue
     private int size;
-    private int capacity;
 
     // Default constructor for linked list
     public LinkedListQueue() {
@@ -25,21 +24,9 @@ public class LinkedListQueue<E> implements QueueInterface<E> {
         this.size = 0;
     }
 
-    // Linked list does not care about capacity parameter
-    public LinkedListQueue(int capacity) {
-        if (capacity <= 0) {
-            throw new IllegalStateException("Capacity must be greater than 0.");
-        }
-
-        this.head = null;
-        this.tail = null;
-        this.size = 0;
-        this.capacity = capacity;
-    }
-
     @Override
     public int capacity() {
-        return capacity;
+        return Integer.MAX_VALUE;
     }
 
     @Override

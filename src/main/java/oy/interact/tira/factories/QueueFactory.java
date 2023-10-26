@@ -14,27 +14,25 @@ public class QueueFactory {
 
     // TODO: Teachers - both ArrayQueue and LinkedListQueue have been implemented!
 	public static QueueInterface<Integer> createIntegerQueue() {
-        //return new ArrayQueue<>();
 		return new LinkedListQueue<>();
+        //return new ArrayQueue<>();
 	}
 
 	public static QueueInterface<Integer> createIntegerQueue(int capacity) {
 		return new ArrayQueue<>(capacity);
-		//return new LinkedListQueue<>(capacity);
 	}
 
 	public static QueueInterface<String> createStringQueue() {
-		//return new ArrayQueue<>();
 		return new LinkedListQueue<>();
+		//return new ArrayQueue<>();
 	}
 
 	public static QueueInterface<String> createStringQueue(int capacity) {
-		//return new ArrayQueue<>(capacity);
-		return new LinkedListQueue<>(capacity);
+		return new ArrayQueue<>(capacity);
 	}
 
 	public static QueueInterface<Coder> createCoderQueue() {
-        //return new ArrayQueue<>();
 		return new LinkedListQueue<>();
+        //return new ArrayQueue<>();
 	}
 }

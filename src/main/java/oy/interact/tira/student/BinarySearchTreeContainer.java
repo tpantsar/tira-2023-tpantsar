@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 
 public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TIRAKeyedOrderedContainer<K, V> {
 
-    //TreeNode treeNode; // Root node of the tree, your private little helper class.
+    //TreeNode root; // Root node of the tree, your private little helper class.
     private Node root = null;
     private int size; // Number of elements currently in the tree.
     private int currentIndex = 0; // Keep track of the index
@@ -28,12 +28,14 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
         private V value;
         private Node leftChild;
         private Node rightChild;
+        private int childCount;
 
         private Node(K key, V value) {
             this.key = key;
             this.value = value;
             this.leftChild = null;
             this.rightChild = null;
+            this.childCount = 0;
         }
 
         // Utilize Comparable.compareTo method for comparing objects
@@ -45,14 +47,18 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
             } else {
                 if (node.key.compareTo(this.key) < 0) {
                     if (this.leftChild == null) {
+                        this.childCount++;
                         this.leftChild = node;
                     } else {
+                        this.childCount++;
                         this.leftChild.add(node);
                     }
                 } else if (node.key.compareTo(this.key) > 0) {
                     if (this.rightChild == null) {
+                        this.childCount++;
                         this.rightChild = node;
                     } else {
+                        this.childCount++;
                         this.rightChild.add(node);
                     }
                 }

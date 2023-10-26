@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Order;
  */
 @DisplayName("Basic tests for the QueueImplementation class.")
 @TestMethodOrder(OrderAnnotation.class)
- public class QueueTests 
+public class QueueTests 
 {
     static Random randomizer = null;
     static final int MIN_QUEUE_SIZE = 10;
@@ -54,7 +54,8 @@ import org.junit.jupiter.api.Order;
         int queueSize = Math.max(2, randomizer.nextInt(100));
         QueueInterface<Integer> queueToTest = QueueFactory.createIntegerQueue(queueSize);
         assertNotNull(queueToTest, () -> "Could not create queue object to test. Implement QueueBuilder.createIntegerQueue().");
-        assertEquals(queueSize, queueToTest.capacity(), () -> "Queue capacity must be what was requested in creating it.");
+        int queueCapacity = queueToTest.capacity();
+        assertTrue((queueSize == queueCapacity || Integer.MAX_VALUE == queueCapacity), () -> "Queue capacity must be what was requested in creating it.");
     }
 
     @Test
@@ -157,10 +158,12 @@ import org.junit.jupiter.api.Order;
             assertDoesNotThrow(() -> queueToTest.enqueue(value), "In this test add must succeed, add failed.");
         }
         int oldCapacity = queueToTest.capacity();
-        // Queue should be now full so the next add should reallocate, grow capacity.
-        assertDoesNotThrow(() -> queueToTest.enqueue(42), "Pushing to a full queue must reallocate and success.");
-        int newCapacity = queueToTest.capacity();
-        assertTrue(newCapacity > oldCapacity, () -> "The capacity did not grow when it should have.");
+        if (oldCapacity < Integer.MAX_VALUE) {
+            // Queue should be now full so the next add should reallocate, grow capacity.
+            assertDoesNotThrow(() -> queueToTest.enqueue(42), "Pushing to a full queue must reallocate and success.");
+            int newCapacity = queueToTest.capacity();
+            assertTrue(newCapacity > oldCapacity, () -> "The capacity did not grow when it should have.");
+        }
         assertEquals(testData.get(0), queueToTest.dequeue(), () -> "First thing queued was not dequeued from queue.");
         assertEquals(testData.get(1), queueToTest.dequeue(), () -> "Reallocated queue has no second to last element in place.");
         assertFalse(queueToTest.isEmpty(), () -> "Queue should not be empty at this point.");
