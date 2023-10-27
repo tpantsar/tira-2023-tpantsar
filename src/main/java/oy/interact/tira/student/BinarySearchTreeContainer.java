@@ -10,12 +10,11 @@ import java.util.function.Predicate;
 public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TIRAKeyedOrderedContainer<K, V> {
 
     //TreeNode root; // Root node of the tree, your private little helper class.
-    private Node root = null;
+    private Node root;
     private int size; // Number of elements currently in the tree.
-    private int currentIndex = 0; // Keep track of the index
-
-    // The comparator used to determine if new node will go to left or right subtree.
-    private Comparator<K> comparator;
+    private int maxDepth = 0; // Maximum depth (height) of the tree
+    private int currentIndex = 0; // Index of the current node
+    private Comparator<K> comparator; // The comparator used to determine if new node will go to left or right subtree.
 
     // Constructor
     public BinarySearchTreeContainer(Comparator<K> comparator) {
@@ -38,31 +37,34 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
             this.childCount = 0;
         }
 
-        // Utilize Comparable.compareTo method for comparing objects
-        private void add(Node node) {
-            // If added value is identical in BST, update the node and remove duplicate values
+        // Utilizes Comparable.compareTo method for comparing objects, returns depth of the added node in tree
+        private int add(Node node, int depth) {
             if (this.value.equals(node.value)) {
+                // If added value is identical in BST, update the node and remove duplicate values
                 this.key = node.key;
                 this.value = node.value;
-            } else {
-                if (node.key.compareTo(this.key) < 0) {
-                    if (this.leftChild == null) {
-                        this.childCount++;
-                        this.leftChild = node;
-                    } else {
-                        this.childCount++;
-                        this.leftChild.add(node);
-                    }
-                } else if (node.key.compareTo(this.key) > 0) {
-                    if (this.rightChild == null) {
-                        this.childCount++;
-                        this.rightChild = node;
-                    } else {
-                        this.childCount++;
-                        this.rightChild.add(node);
-                    }
+                size--;
+                return depth;
+            } else if (node.key.compareTo(this.key) < 0) {
+                if (this.leftChild == null) {
+                    this.childCount++;
+                    this.leftChild = node;
+                    return depth + 1;
+                } else {
+                    this.childCount++;
+                    return this.leftChild.add(node, depth + 1);
+                }
+            } else if (node.key.compareTo(this.key) > 0) {
+                if (this.rightChild == null) {
+                    this.childCount++;
+                    this.rightChild = node;
+                    return depth + 1;
+                } else {
+                    this.childCount++;
+                    return this.rightChild.add(node, depth + 1);
                 }
             }
+            return depth;
         }
 
         private Node bstSearch(Node node, K key) {
@@ -87,8 +89,12 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
         if (root == null) {
             root = node;
         } else {
-            root.add(node);
+            int nodeDepth = root.add(node, 0);
+            if (nodeDepth > this.maxDepth) {
+                maxDepth = nodeDepth;
+            }
         }
+        this.size++;
     }
 
     @Override
@@ -112,7 +118,6 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
 
     @Override
     public V find(Predicate<V> searcher) {
-        // Haetaan predikaatin mukaisen hakukriteerin täyttävä arvo puusta
         return findValueInOrder(root, searcher);
     }
 
@@ -140,17 +145,7 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
 
     @Override
     public int size() {
-        size = getTreeSize(root);
         return size;
-    }
-
-    // Calculates size of the tree beginning from the node parameter
-    private int getTreeSize(Node node) {
-        if (node == null) {
-            return 0; // An empty tree has size 0
-        }
-
-        return getTreeSize(node.leftChild) + getTreeSize(node.rightChild) + 1;
     }
 
     @Override
@@ -220,7 +215,6 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
 
     @Override
     public Pair<K, V> getIndex(int index) throws IndexOutOfBoundsException {
-        // Haetaan tietyssä indeksissä oleva avain-arvo -pari
         if (index < 0) {
             throw new IllegalArgumentException("Index is out of bounds");
         }
@@ -253,7 +247,6 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
 
     @Override
     public int findIndex(Predicate<V> searcher) {
-        // Haetaan predikaatin mukaisen hakukriteerin täyttävä arvon indeksi eli järjestysnumero puusta.
         currentIndex = 0;
         return findIndexInOrder(root, searcher);
     }

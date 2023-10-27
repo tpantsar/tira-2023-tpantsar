@@ -314,8 +314,89 @@ Kokonaiskesto esim. 50 000 elementin json-tiedoston lajittelulle nopeutui n. **4
 
 ## 07-TASK
 
+Ylivoimaisesti vaikeinta BST:n toteutuksessa oli getIndex(int index) metodin toteuttaminen, joka vei eniten aikaa.
+Sain toimimaan lapsisolmujen lukumäärän laskemisen, mutta sen avulla koodareiden hakua listasta en.
+Binäärisen hakupuun toimintaperiaate on loppupeleissä melko yksinkertainen, mutta sen opettelu ja sisäistäminen vei
+yllättävän paljon aikaa.
 
+Päätin olla hyödyntämättä `TreeNode` -luokkaa ja tein BST:lle oman Node-luokan, joka sisältää `add` ja `bstSearch`
+-metodit. Lisäksi, Comparator-rajapinnan sijaan hyödynsin olioiden vertailussa Comparable-rajapintaa, joka laajentaa jo
+valmiiksi `BinarySearchTreeContainer` -luokkaa.
 
+Toteutin työssä vaadittavat algoritmit A-metodilla, eli rekursiivisella in-order läpikäynnillä. Tämän
+aikakompleksisuusluokka on O(n). Rekursiivinen toteutus on vaihtoehdoista yksinkertaisin, joten valitsin sen.
+`getIndex()` ja `indexOf()` -metodien toteutuksessa yritin hyödyntää lapsisolmujen lukumäärää vaihtoehdon D) mukaan, mutta
+se osoittautui haasteelliseksi. Tämän avulla aikakompleksisuuden olisi saanut jopa O(log n) tasolle.
+Analysoin aikamittauksia in-order toteutuksella 100 000 koodariin asti, koska tätä suuremmat aineistot olivat liian
+hitaita.
+
+Laskin binääripuiden syvyyden aineiston koon perusteella:
+
+| Elements (n)	 | Depth  |
+|---------------|--------|
+| 100	          | 12     |	   
+| 1 000         | 21     |
+| 5 000         | 28     |
+| 10 000        | 29     |
+| 50 000        | 39     |
+| 100 000       | 37     |
+| 1 000 000     | 50     |
+
+> **BSTPerformanceTests** aikamittauksia ja kuvaajia in-order toteutukselle. Huomataan, että taulukkototeutukseen verrattuna lisäysaika (Add time)
+> ja lajittelu (To sorted array time) olivat nopeampia. Vastaavasti, binäärinen hakupuu oli erittäin hidas, kun puusta haettiin
+> avain-arvo paria tietyllä indeksillä -> `getIndex(index)`. 100 000 aineiston kohdalla haku kesti noin 78 sekuntia!
+> Tämä johtuu siitä, että nykyinen toteutus käy pahimmassa tapauksessa koko puun läpi, ennen kuin se löytää indeksiä vastaavan
+> elementin. Eli silloin, kun etsitään esim. puun viimeistä indeksiä.
+
+<img src="images/BSTPerformanceTests_graphs.png" alt="BST Graphs" width="1500"/>
+
+> **SimpleContainerPerformanceTests** aikamittauksia ja kuvaajia. Binäärinen hakupuu ja taulukkototeutus olivat suunnilleen yhtä nopeita, kun aineistosta haettiin jotain arvoa (value) tietyllä
+> avaimella (key) -> Search time (ms)
+
+<img src="images/SimpleContainerPerformanceTests_graphs.png" alt="SimpleContainer Graphs" width="1500"/>
+
+Testatessa TIRA Coders Appia huomasin, että BST:n in-order toteutuksella koodareiden selaaminen ja haku oli sujuvaa 100
+000 aineistoon saakka. Kaikki operaatiot kestivät alle 200 ms ja ei vaikuttanut juuri käyttäjäkokemukseen.
+
+Kun koodareita yrittää selata 1 000 000 koodarin aineistolla, käyttöliittymä tökkii jatkuvasti.
+JSON-tiedoston lukeminen (1 000 000 koodaria) ja osittainen haku koodarin sukunimen perusteella listan lopusta,
+esimerkiksi "Westerholm", tulostaa seuraavanlaiset aikamittaukset:
+
+> 1 000 000 koodarin aineiston lataaminen ja osittainen haku "Westerholm":
+
+PhoneBookBST: Reading JSON with 1000000 items took 12023 ms
+
+PhoneBookBST: JSON to Coders array took 1110 ms
+
+PhoneBookBST: Add to container with 999998 items took 2146 ms
+
+PhoneBookBST: Search took 645 ms
+
+PhoneBookBST: Get coder by index took 13 ms
+
+PhoneBookBST: Getting friend names took 451 ms
+
+> 2 000 000 koodarin aineiston lataaminen ja osittainen haku "Åström":
+
+PhoneBookBST: Reading JSON with 2000000 items took 25004 ms
+
+PhoneBookBST: JSON to Coders array took 6335 ms
+
+PhoneBookBST: Add to container with 1999987 items took 4626 ms
+
+PhoneBookBST: Search took 1528 ms
+
+PhoneBookBST: Get coder by index took 31 ms
+
+PhoneBookBST: Getting friend names took 109 ms
+
+Tällaisilla vasteajoilla käyttökokemus ei ole enää miellyttävä, vaan vaatii nopeampien algoritmien toteutusta.
+Sain toteutettua lapsisolmujen lukumäärän laskemisen `childCount` jokaiselle solmulle,
+ja sitä hyödyntämällä hakuajan aikakompleksisuuden saisi jopa O(log n) tasolle. Tästä huolimatta,
+päätin olla toteuttamatta tätä tapaa. `getIndex(int index)` -metodini on siis toteutettu in-order,
+joka käy rekursiivisesti läpi binääristä hakupuuta ja samalla pitää kirjaa, missä indeksissä ollaan
+menossa -> `currentIndex`.
+Sitten, kun `currentIndex == index` -ehto toteutuu, niin metodi palauttaa uuden avain-arvo parin kutsujalle.
 
 
 ## 08-TASK
