@@ -5,76 +5,53 @@ import oy.interact.tira.util.TIRAKeyedContainer;
 
 import java.util.function.Predicate;
 
-public class HashTableContainer<K extends Comparable<K>,V> implements TIRAKeyedContainer<K,V> {
+public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyedContainer<K, V> {
 
-    private Object [] itemArray;
-    private int size;
+    private Pair<K, V>[] itemArray;
+    private static final int DEFAULT_ARRAY_SIZE = 1000; // Default array size
+    private int size = 0; // The amount of elements in hash table array
+
+    private int collisions = 0;
 
     // Constructor for hash table
-    public HashTableContainer(int size) {
-        this.size = size;
-        this.itemArray = new Object[size];
+    public HashTableContainer() {
+        this.itemArray = (Pair<K, V>[]) new Pair[DEFAULT_ARRAY_SIZE];
     }
 
-    private int hashFunction(Pair<K, V> element, int index) {
+    private int hashFunction(K key) {
+        int hash = 31;
+        int keyLength = key.toString().length();
 
-        // Hash the string one character (as integer) at a time
-        // Chars have numerical code in different char sets
-        // NB: that number below is not yet usable as an index to table
-
-        /*
-        hash(string)
-            hash = 31;
-            for char in string
-                hash = (hash * 31 + charAsInt(char))
-            return hash
-        */
-
-        // hash(2761) = 2761 % 1009 = 743
-
-        // probeFunc(k,i) = (hashFunc(k) + i) mod m)
-        // hash(2761,0) = (2761 + 0) % 10000 = 2761
-        // let’s play: collisions happen and i got very large for k
-        // hash(2761, 9876) = (2761 + 9876) % 10000 = 2637
-
-        int modulus = size / 10; // Convert to prime number
-
-        K elementKey = element.getKey();
-
-        for (int i = 0; i < elementKey.toString().length(); i++) {
-            char character = elementKey.toString().charAt(i);
-
+        for (int i = 0; i < keyLength; i++) {
+            int charAsInt = key.toString().charAt(i);
+            hash = (hash * 31 + charAsInt);
         }
 
-        //int hashIndex = element.getKey()
-
-        return 0;
+        //return Math.abs(hash % DEFAULT_ARRAY_SIZE); // Convert to prime number
+        int hashIndex = hash % DEFAULT_ARRAY_SIZE;
+        return (hashIndex < 0) ? -hashIndex : hashIndex;
     }
 
     @Override
     public void add(K key, V value) throws OutOfMemoryError, IllegalArgumentException {
-        /*
-        i = 0
-        while i < A.length - 1
-            hashIndex = hashFunc(e, i)
-            if A[hashIndex] = null
-                A[hashIndex] = e
-                return hashIndex
-            i += 1
-        return OVERFLOW
-        */
-
         // Check if one or both of the parameters are null
         if (key == null || value == null) {
             throw new IllegalArgumentException("Key or value cannot be null");
         }
 
         try {
-            int i = 0;
-            while (i < itemArray.length - 1) {
-                Pair<K, V> element = new Pair<>(key, value);
-                int hashIndex = hashFunction(element, i);
+            int hashIndex = hashFunction(key);
+
+            if (itemArray[hashIndex] != null && itemArray[hashIndex].getKey().equals(key)) { // Duplicate keys found
+                itemArray[hashIndex] = new Pair<>(key, value);
+            } else if (itemArray[hashIndex] == null) { // Empty index found
+                itemArray[hashIndex] = new Pair<>(key, value);
+                size++; // Increase container size by one, after adding new element
+            } else { // Collision
+                collisions++;
+                size++; // Increase container size by one, after adding new element
             }
+
         } catch (OutOfMemoryError e) {
             System.out.println("\n*** ERROR: Run out of memory while adding key-value pairs to container\n");
             e.printStackTrace();
@@ -83,30 +60,33 @@ public class HashTableContainer<K extends Comparable<K>,V> implements TIRAKeyedC
 
     @Override
     public V get(K key) throws IllegalArgumentException {
-        return null;
+        int hashIndex = hashFunction(key);
+        if (itemArray[hashIndex] != null && itemArray[hashIndex].getKey().equals(key)) {
+            return itemArray[hashIndex].getValue();
+        }
+        return null; // Key not found
     }
 
     @Override
     public V remove(K key) throws IllegalArgumentException {
-        return null;
+        V value = null;
+        int hashIndex = hashFunction(key);
+
+        if (itemArray[hashIndex].getKey().equals(key)) {
+            value = itemArray[hashIndex].getValue();
+            itemArray[hashIndex] = new Pair<>(null, null);
+            size--; // Decrease container size by one, after removing the element
+        }
+        return value;
     }
 
     @Override
     public V find(Predicate<V> searcher) {
-        /*
-        i = 0
-        hashIndex = hashFunc(key, i)
-        while i < A.length - 1 & A[hashIndex] = null
-            if A[hashIndex] = key
-                return A[hashIndex]
-            i += 1
-            if i < A.length - 1
-                hashIndex = hashFunc(key, i)
-        return null
-        */
-
-
-
+        for (Pair<K, V> keyValuePair : itemArray) {
+            if (null != keyValuePair && searcher.test(keyValuePair.getValue())) {
+                return keyValuePair.getValue();
+            }
+        }
         return null;
     }
 
@@ -126,13 +106,23 @@ public class HashTableContainer<K extends Comparable<K>,V> implements TIRAKeyedC
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void clear() {
         size = 0;
-        itemArray = new Object[size];
+        itemArray = (Pair<K, V>[]) new Pair[DEFAULT_ARRAY_SIZE];
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Pair<K, V>[] toArray() throws Exception {
-        return new Pair[0];
+        Pair<K, V>[] resultArray = (Pair<K, V>[]) new Pair[size];
+        int resultArrayIndex = 0; // Index for temporary array
+
+        for (int i = 0; i < itemArray.length; i++) {
+            if (itemArray[i] != null) {
+                resultArray[resultArrayIndex++] = new Pair<>(itemArray[i].getKey(), itemArray[i].getValue());
+            }
+        }
+        return resultArray;
     }
 }
