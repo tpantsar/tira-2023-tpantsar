@@ -1,6 +1,9 @@
 package oy.interact.tira.student;
 
+import oy.interact.tira.factories.QueueFactory;
+import oy.interact.tira.model.Coder;
 import oy.interact.tira.util.Pair;
+import oy.interact.tira.util.QueueInterface;
 import oy.interact.tira.util.TIRAKeyedContainer;
 
 import java.util.function.Predicate;
@@ -27,9 +30,7 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
             hash = (hash * 31 + charAsInt);
         }
 
-        //return Math.abs(hash % DEFAULT_ARRAY_SIZE); // Convert to prime number
-        int hashIndex = hash % DEFAULT_ARRAY_SIZE;
-        return (hashIndex < 0) ? -hashIndex : hashIndex;
+        return (hash & 0x7FFFFFFF) % itemArray.length;
     }
 
     @Override
@@ -48,6 +49,10 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
                 itemArray[hashIndex] = new Pair<>(key, value);
                 size++; // Increase container size by one, after adding new element
             } else { // Collision
+                LinkedListQueue<Object> linkedList = new LinkedListQueue<>();
+                //QueueInterface<Coder> linkedList = QueueFactory.createCoderQueue();
+                linkedList.enqueue(itemArray[hashIndex]); // Current element in the index
+                linkedList.enqueue(new Pair<>(key, value));
                 collisions++;
                 size++; // Increase container size by one, after adding new element
             }
