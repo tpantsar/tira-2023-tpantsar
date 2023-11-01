@@ -49,8 +49,12 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
                 itemArray[hashIndex] = new Pair<>(key, value);
                 size++; // Increase container size by one, after adding new element
             } else { // Collision
+
                 LinkedListQueue<Object> linkedList = new LinkedListQueue<>();
-                //QueueInterface<Coder> linkedList = QueueFactory.createCoderQueue();
+                QueueInterface<Coder> linkedListCoder = QueueFactory.createCoderQueue();
+                //LinkedListQueue<Pair<K, V>>[] linkedListPair = new LinkedListQueue<>();
+
+
                 linkedList.enqueue(itemArray[hashIndex]); // Current element in the index
                 linkedList.enqueue(new Pair<>(key, value));
                 collisions++;
