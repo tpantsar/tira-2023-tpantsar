@@ -1,5 +1,6 @@
 package oy.interact.tira.student;
 
+import oy.interact.tira.util.Pair;
 import oy.interact.tira.util.QueueInterface;
 
 public class LinkedListQueue<E> implements QueueInterface<E> {
@@ -10,6 +11,17 @@ public class LinkedListQueue<E> implements QueueInterface<E> {
 
         public Node(T data) {
             this.data = data;
+            this.next = null;
+        }
+    }
+
+    private static class HashTableNode<K extends Comparable<K>, V> {
+        Pair<K, V> data;
+        HashTableNode<K, V> next;
+
+        public HashTableNode(Pair<K, V> data) {
+            this.data = data;
+            this.next = null;
         }
     }
 
