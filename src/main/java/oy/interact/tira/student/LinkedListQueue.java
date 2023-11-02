@@ -5,11 +5,11 @@ import oy.interact.tira.util.QueueInterface;
 public class LinkedListQueue<E> implements QueueInterface<E> {
 
     private static class Node<T> {
-        T element; // The element inside node
+        T data; // The element (object) inside node
         Node<T> next; // Next element in node
 
         public Node(T data) {
-            this.element = data;
+            this.data = data;
         }
     }
 
@@ -56,7 +56,7 @@ public class LinkedListQueue<E> implements QueueInterface<E> {
             throw new IllegalStateException("Cannot remove element from empty queue.");
         }
 
-        E removed = head.element;
+        E removed = head.data;
         head = head.next; // Next node in head is the new head
         size--;
 
@@ -72,7 +72,7 @@ public class LinkedListQueue<E> implements QueueInterface<E> {
         if (isEmpty()) {
             throw new IllegalStateException("Queue is empty.");
         }
-        return head.element;
+        return head.data;
     }
 
     @Override
@@ -98,7 +98,7 @@ public class LinkedListQueue<E> implements QueueInterface<E> {
         builder.append("[");
         Node<E> current = head;
         while (null != current) {
-            builder.append(current.element.toString());
+            builder.append(current.data.toString());
             current = current.next;
             if (null != current) {
                 builder.append(", ");

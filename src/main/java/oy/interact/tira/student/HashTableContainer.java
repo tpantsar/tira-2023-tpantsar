@@ -17,20 +17,9 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
     private int collisions = 0;
 
     // Constructor for hash table
+    @SuppressWarnings("unchecked")
     public HashTableContainer() {
         this.itemArray = (Pair<K, V>[]) new Pair[DEFAULT_ARRAY_SIZE];
-    }
-
-    private int hashFunction(K key) {
-        int hash = 31;
-        int keyLength = key.toString().length();
-
-        for (int i = 0; i < keyLength; i++) {
-            int charAsInt = key.toString().charAt(i);
-            hash = (hash * 31 + charAsInt);
-        }
-
-        return (hash & 0x7FFFFFFF) % itemArray.length;
     }
 
     @Override
@@ -41,7 +30,11 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
         }
 
         try {
-            int hashIndex = hashFunction(key);
+            // Initialize a new coder with unique id -> key.toString()
+            Coder newCoder = new Coder(key.toString());
+
+            // Use the hashCode() method of Coder class and limit the returned hash to table size
+            int hashIndex = (newCoder.hashCode() & 0x7FFFFFFF) % itemArray.length;
 
             if (itemArray[hashIndex] != null && itemArray[hashIndex].getKey().equals(key)) { // Duplicate keys found
                 itemArray[hashIndex] = new Pair<>(key, value);
@@ -52,8 +45,7 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
 
                 LinkedListQueue<Object> linkedList = new LinkedListQueue<>();
                 QueueInterface<Coder> linkedListCoder = QueueFactory.createCoderQueue();
-                //LinkedListQueue<Pair<K, V>>[] linkedListPair = new LinkedListQueue<>();
-
+                LinkedListQueue[] linkedListPair = new LinkedListQueue[]{new LinkedListQueue<>()};
 
                 linkedList.enqueue(itemArray[hashIndex]); // Current element in the index
                 linkedList.enqueue(new Pair<>(key, value));
@@ -69,7 +61,9 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
 
     @Override
     public V get(K key) throws IllegalArgumentException {
-        int hashIndex = hashFunction(key);
+        Coder newCoder = new Coder(key.toString());
+        int hashIndex = (newCoder.hashCode() & 0x7FFFFFFF) % itemArray.length;
+
         if (itemArray[hashIndex] != null && itemArray[hashIndex].getKey().equals(key)) {
             return itemArray[hashIndex].getValue();
         }
@@ -79,7 +73,9 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
     @Override
     public V remove(K key) throws IllegalArgumentException {
         V value = null;
-        int hashIndex = hashFunction(key);
+
+        Coder newCoder = new Coder(key.toString());
+        int hashIndex = (newCoder.hashCode() & 0x7FFFFFFF) % itemArray.length;
 
         if (itemArray[hashIndex].getKey().equals(key)) {
             value = itemArray[hashIndex].getValue();

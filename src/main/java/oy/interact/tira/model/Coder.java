@@ -241,7 +241,20 @@ public class Coder implements Comparable<Coder> {
 	 */
 	@Override
 	public int hashCode() {
-		return 0;
+		int hash = 31;
+		int keyLength = this.id.length();
+
+		for (int i = 0; i < keyLength; i++) {
+			int charAsInt = this.id.charAt(i);
+			hash = (hash * 31 + charAsInt);
+		}
+
+		/*
+		"hashCode():n toteutus ei saa rajoittaa palautettavan kokonaisluvun arvoa millään tavoin;
+		sen pitää voida olla erittäin suuri tai pieni positiivinen tai negatiivinen kokonaisluku.
+		Tämä luku rajataan taulukon kokoon vasta hajautustaulu -tietorakenteessa."
+		*/
+		return hash;
 	}
 
 }
