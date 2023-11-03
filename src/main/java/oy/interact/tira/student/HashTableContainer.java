@@ -1,9 +1,7 @@
 package oy.interact.tira.student;
 
-import oy.interact.tira.factories.QueueFactory;
 import oy.interact.tira.model.Coder;
 import oy.interact.tira.util.Pair;
-import oy.interact.tira.util.QueueInterface;
 import oy.interact.tira.util.TIRAKeyedContainer;
 
 import java.util.function.Predicate;
@@ -12,9 +10,10 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
 
     //private Pair<K, V>[] itemArray;
     private Node<K, V>[] itemArray; // An array of linked lists
-    private static final int DEFAULT_ARRAY_SIZE = 1000; // Default array size
+    private static final int DEFAULT_ARRAY_SIZE = 2000000; // Default array size
     private int size = 0; // The amount of elements in hash table array
     public int collisions = 0;
+    public int[] longestChain = {0, 0}; // Index, length
 
     private static class Node<K extends Comparable<K>, V> {
         Pair<K, V> data;
@@ -25,7 +24,6 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
             this.next = null;
         }
     }
-
 
     // Constructor for hash table
     @SuppressWarnings("unchecked")
@@ -41,7 +39,6 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
         int hashCode;
 
         if (key instanceof Coder coderObject) {
-
             // Initialize a new coder and access the id -> coder.getId()
             Coder coderId = new Coder(coderObject.getId());
 
@@ -66,20 +63,31 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
             // Calculates the final hash index limited to table size
             int hashIndex = hashFunction(key);
 
-            if (itemArray[hashIndex] != null && itemArray[hashIndex].data.getKey().equals(key)) { // Duplicate keys found
+            if (itemArray[hashIndex] != null && itemArray[hashIndex].data.getKey().equals(key)) {
+                // Duplicate keys found
                 itemArray[hashIndex] = new Node<>(new Pair<>(key, value));
             } else if (itemArray[hashIndex] == null) { // Empty index found
                 itemArray[hashIndex] = new Node<>(new Pair<>(key, value));
                 size++; // Increase container size by one, after adding new element
-            } else { // Collision, chain elements using linked lists
+            } else {
+                // Collision, chain elements using linked lists
+                Node<K, V> current = itemArray[hashIndex];
+                int chainCounter = 1;
+                while (current.next != null) {
+                    current = current.next; // Iterate to the last link
+                    chainCounter++;
+                }
+                current.next = new Node<>(new Pair<>(key, value));
+                chainCounter++;
 
-                // Initialize coder object to access its attributes
-                Coder coderObject = (Coder) key;
+                if (chainCounter > longestChain[1]) {
+                    longestChain[0] = hashIndex;
+                    longestChain[1] = chainCounter;
+                }
 
                 collisions++;
                 size++; // Increase container size by one, after adding new element
             }
-
         } catch (OutOfMemoryError e) {
             System.out.println("\n*** ERROR: Run out of memory while adding key-value pairs to container\n");
             e.printStackTrace();
@@ -88,26 +96,49 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
 
     @Override
     public V get(K key) throws IllegalArgumentException {
+        if (key == null) {
+            throw new IllegalArgumentException("Key cannot be null.");
+        }
+
         // Calculates the final hash index limited to table size
         int hashIndex = hashFunction(key);
+        Node<K, V> current = itemArray[hashIndex];
 
-        if (itemArray[hashIndex] != null && itemArray[hashIndex].data.getKey().equals(key)) {
-            return itemArray[hashIndex].data.getValue();
+        while (current != null) {
+            if (current.data.getKey().equals(key)) {
+                return current.data.getValue();
+            }
+            current = current.next;
         }
         return null; // Key not found
     }
 
     @Override
     public V remove(K key) throws IllegalArgumentException {
-        V value = null;
+        if (key == null) {
+            throw new IllegalArgumentException("Key cannot be null.");
+        }
 
         // Calculates the final hash index limited to table size
         int hashIndex = hashFunction(key);
 
-        if (itemArray[hashIndex].data.getKey().equals(key)) {
-            value = itemArray[hashIndex].data.getValue();
-            itemArray[hashIndex] = new Node<>(new Pair<>(key, value)); // TODO
-            size--; // Decrease container size by one, after removing the element
+        V value = null;
+        Node<K, V> current = itemArray[hashIndex];
+        Node<K, V> previous = null;
+
+        while (current != null) {
+            if (current.data.getKey().equals(key)) {
+                value = current.data.getValue();
+                if (previous == null) {
+                    itemArray[hashIndex] = current.next;
+                } else {
+                    previous.next = current.next;
+                }
+                size--;
+                break;
+            }
+            previous = current;
+            current = current.next;
         }
         return value;
     }
@@ -115,8 +146,12 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
     @Override
     public V find(Predicate<V> searcher) {
         for (Node<K, V> keyValuePair : itemArray) {
-            if (null != keyValuePair && searcher.test(keyValuePair.data.getValue())) {
-                return keyValuePair.data.getValue();
+            Node<K, V> current = keyValuePair;
+            while (current != null) {
+                if (searcher.test(current.data.getValue())) {
+                    return current.data.getValue();
+                }
+                current = current.next;
             }
         }
         return null;
@@ -151,8 +186,10 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
         int resultArrayIndex = 0; // Index for temporary array
 
         for (int i = 0; i < itemArray.length; i++) {
-            if (itemArray[i] != null) {
-                resultArray[resultArrayIndex++] = new Pair<>(itemArray[i].data.getKey(), itemArray[i].data.getValue());
+            Node<K, V> current = itemArray[i];
+            while (current != null) {
+                resultArray[resultArrayIndex++] = new Pair<>(current.data.getKey(), current.data.getValue());
+                current = current.next;
             }
         }
         return resultArray;

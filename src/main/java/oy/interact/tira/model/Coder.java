@@ -241,12 +241,12 @@ public class Coder implements Comparable<Coder> {
 	 */
 	@Override
 	public int hashCode() {
-		int hash = 31;
+		int hash = 0;
 		int keyLength = this.id.length();
 
 		for (int i = 0; i < keyLength; i++) {
 			int charAsInt = this.id.charAt(i);
-			hash = (hash * 31 + charAsInt);
+			hash = hash * 31 + (charAsInt & 0xff);
 		}
 
 		/*
