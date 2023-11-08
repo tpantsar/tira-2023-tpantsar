@@ -69,7 +69,7 @@ public class CodeWordsCounter {
 	private void countWordsFrom(File file) throws OutOfMemoryError, IOException {
 		String content = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
 		// Characters of a single word as Unicode codepoints.
-		int [] wordChars = new int[MAX_WORD_SIZE];
+		int[] wordChars = new int[MAX_WORD_SIZE];
 		// Index used to fill wordChars array from the string in the file.
 		int codeWordIndex = 0;
 		System.out.println("File: " + file.getAbsolutePath());
@@ -83,7 +83,7 @@ public class CodeWordsCounter {
 			//    ...else we have a word break char and wordChars contains now a word:
 			//       2.2 If the array has 2 or more chars (do not count one char "words")...
 			//          2.2.1 Convert the array of chars to String object.
-			//          2.2.2 Convert the string to lowercase (we treat "char" and "CHAR" as one "char" word) 
+			//          2.2.2 Convert the string to lowercase (we treat "char" and "CHAR" as one "char" word)
 			//          2.2.3 Get the word count from the hashtable (word is key, returned value from hashtable is the count)
 			//          2.2.4 If we got null, hashtable does not have this word, then...
 			//             2.2.4.1 add the word with count 1 to the hashtable; word appears once so far.
@@ -92,6 +92,25 @@ public class CodeWordsCounter {
 			//                     (Remember that adding the same key to hashtable must update the value already in hashtable).
 			//       2.3 Reset the codeWordIndex to zero so next new word will start filling the wordChars array from the start.
 
+			int codePoint = content.charAt(index);
+
+			if (Character.isLetter(codePoint)) {
+				wordChars[codeWordIndex++] = codePoint;
+			} else if (codeWordIndex > 1) {
+				// Word break character encountered, check if the array has 2 or more characters
+				String word = new String(wordChars, 0, codeWordIndex).toLowerCase();
+				Integer wordCount = codeWords.get(word);
+				if (wordCount == null) {
+					codeWords.add(word, 1);
+				} else {
+					codeWords.add(word, wordCount + 1);
+				}
+				// Reset the codeWordIndex to zero so next new word will start filling the wordChars array from the start.
+				codeWordIndex = 0;
+
+				// Reset wordChars array for new word
+				wordChars = new int[MAX_WORD_SIZE];
+			}
 		}
 		// ^^ STUDENTS: your implementation after the commens.
 		cumulativeTimeInMilliseconds += System.currentTimeMillis() - start;
@@ -100,7 +119,7 @@ public class CodeWordsCounter {
 	@SuppressWarnings("unchecked")
 	public Pair<String, Integer>[] topCodeWords(int topCount) throws Exception {
 		if (null == codeWords) {
-			Pair<String, Integer>[] result = new Pair[1];	
+			Pair<String, Integer>[] result = new Pair[1];
 			result[0] = new Pair<>("Hashtable not implemented yet", 0);
 			return result;
 		}
@@ -113,7 +132,27 @@ public class CodeWordsCounter {
 		//        Let's say the resulting new array size is n.
 		// 4. Put the first n items from the array of all pairs to this result array of size n.
 		// 5. Return the results array to caller.
-		return null; // TODO: return the array of codeword/count pairs.
+
+		Pair<String, Integer>[] wordsArray = codeWords.toArray();
+		String[] wordKeys = new String[wordsArray.length];
+
+		for (int i = 0; i < wordsArray.length; i++) {
+			wordKeys[i] = wordsArray[i].getKey();
+		}
+
+		Algorithms.fastSort(wordKeys); // TODO: Implement word sorting to descending order
+
+		int resultArraySize = topCount;
+		if (codeWords.size() < resultArraySize) {
+			resultArraySize = codeWords.size();
+		}
+
+		Pair<String, Integer>[] resultArray = new Pair[resultArraySize];
+		for (int i = 0; i < resultArraySize; i++) {
+			resultArray[i] = wordsArray[i];
+		}
+
+		return resultArray; // TODO: return the array of codeword/count pairs.
 	}
 
 }

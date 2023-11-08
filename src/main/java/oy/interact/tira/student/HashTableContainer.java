@@ -8,12 +8,10 @@ import java.util.function.Predicate;
 
 public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyedContainer<K, V> {
 
-    //private Pair<K, V>[] itemArray;
     private Node<K, V>[] itemArray; // An array of linked lists
     private static final int DEFAULT_ARRAY_SIZE = 2000000; // Default array size
     private int size = 0; // The amount of elements in hash table array
     public int collisions = 0;
-    public int[] longestChain = {0, 0}; // Index, length
 
     private static class Node<K extends Comparable<K>, V> {
         Pair<K, V> data;
@@ -66,25 +64,17 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
             if (itemArray[hashIndex] != null && itemArray[hashIndex].data.getKey().equals(key)) {
                 // Duplicate keys found
                 itemArray[hashIndex] = new Node<>(new Pair<>(key, value));
-            } else if (itemArray[hashIndex] == null) { // Empty index found
+            } else if (itemArray[hashIndex] == null) {
+                // Empty index found
                 itemArray[hashIndex] = new Node<>(new Pair<>(key, value));
                 size++; // Increase container size by one, after adding new element
             } else {
                 // Collision, chain elements using linked lists
                 Node<K, V> current = itemArray[hashIndex];
-                int chainCounter = 1;
                 while (current.next != null) {
                     current = current.next; // Iterate to the last link
-                    chainCounter++;
                 }
                 current.next = new Node<>(new Pair<>(key, value));
-                chainCounter++;
-
-                if (chainCounter > longestChain[1]) {
-                    longestChain[0] = hashIndex;
-                    longestChain[1] = chainCounter;
-                }
-
                 collisions++;
                 size++; // Increase container size by one, after adding new element
             }
@@ -185,8 +175,8 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
         Pair<K, V>[] resultArray = (Pair<K, V>[]) new Pair[size];
         int resultArrayIndex = 0; // Index for temporary array
 
-        for (int i = 0; i < itemArray.length; i++) {
-            Node<K, V> current = itemArray[i];
+        for (Node<K, V> keyValueNode : itemArray) {
+            Node<K, V> current = keyValueNode;
             while (current != null) {
                 resultArray[resultArrayIndex++] = new Pair<>(current.data.getKey(), current.data.getValue());
                 current = current.next;
