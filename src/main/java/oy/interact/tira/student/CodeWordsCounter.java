@@ -134,21 +134,16 @@ public class CodeWordsCounter {
 		// 5. Return the results array to caller.
 
 		Pair<String, Integer>[] wordsArray = codeWords.toArray();
-		String[] wordKeys = new String[wordsArray.length];
+		CodeWordsComparator wordsComparator = new CodeWordsComparator();
+		Algorithms.fastSort(wordsArray, wordsComparator.reversed());
 
-		for (int i = 0; i < wordsArray.length; i++) {
-			wordKeys[i] = wordsArray[i].getKey();
+		// Return sorted words array if its size is less than topCount, e.g. size 85 vs. topCount 100
+		if (codeWords.size() < topCount) {
+			return wordsArray;
 		}
 
-		Algorithms.fastSort(wordKeys); // TODO: Implement word sorting to descending order
-
-		int resultArraySize = topCount;
-		if (codeWords.size() < resultArraySize) {
-			resultArraySize = codeWords.size();
-		}
-
-		Pair<String, Integer>[] resultArray = new Pair[resultArraySize];
-		for (int i = 0; i < resultArraySize; i++) {
+		Pair<String, Integer>[] resultArray = new Pair[topCount];
+		for (int i = 0; i < topCount; i++) {
 			resultArray[i] = wordsArray[i];
 		}
 

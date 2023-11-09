@@ -37,7 +37,7 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
             this.childCount = 0;
         }
 
-        // Utilizes Comparable.compareTo method for comparing objects, returns depth of the added node in tree
+        // Utilizes comparator for comparing objects, returns depth of the added node in tree
         private int add(Node node, int depth) {
             if (this.value.equals(node.value)) {
                 // If added value is identical in BST, update the node and remove duplicate values
@@ -45,7 +45,7 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
                 this.value = node.value;
                 size--;
                 return depth;
-            } else if (node.key.compareTo(this.key) < 0) {
+            } else if (comparator.compare(node.key, this.key) < 0) {
                 if (this.leftChild == null) {
                     this.childCount++;
                     this.leftChild = node;
@@ -54,7 +54,7 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
                     this.childCount++;
                     return this.leftChild.add(node, depth + 1);
                 }
-            } else if (node.key.compareTo(this.key) > 0) {
+            } else if (comparator.compare(node.key, this.key) > 0) {
                 if (this.rightChild == null) {
                     this.childCount++;
                     this.rightChild = node;
@@ -68,10 +68,10 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
         }
 
         private Node bstSearch(Node node, K key) {
-            if (node == null || node.key.compareTo(key) == 0) {
+            if (node == null || comparator.compare(node.key, key) == 0) {
                 return node;
             }
-            if (key.compareTo(node.key) < 0) {
+            if (comparator.compare(key, node.key) < 0) {
                 return bstSearch(node.leftChild, key);
             }
             return bstSearch(node.rightChild, key);

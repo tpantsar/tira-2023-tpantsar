@@ -34,19 +34,7 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
      * Uses Coder.hashCode() to return hash value to this method.
      */
     private int hashFunction(K key) {
-        int hashCode;
-
-        if (key instanceof Coder coderObject) {
-            // Initialize a new coder and access the id -> coder.getId()
-            Coder coderId = new Coder(coderObject.getId());
-
-            // Use the hashCode() method of Coder class and limit the returned hash to table size
-            hashCode = coderId.hashCode();
-        } else {
-            Coder coderId = new Coder(key.toString());
-            hashCode = coderId.hashCode();
-        }
-
+        int hashCode = key.hashCode();
         return (hashCode & 0x7FFFFFFF) % itemArray.length;
     }
 

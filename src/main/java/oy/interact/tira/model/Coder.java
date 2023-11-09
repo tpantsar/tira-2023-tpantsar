@@ -246,7 +246,7 @@ public class Coder implements Comparable<Coder> {
 
 		for (int i = 0; i < keyLength; i++) {
 			int charAsInt = this.id.charAt(i);
-			hash = hash * 31 + (charAsInt & 0xff);
+			hash = hash * 31 + charAsInt;
 		}
 
 		/*
