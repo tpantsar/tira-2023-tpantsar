@@ -1,6 +1,5 @@
 package oy.interact.tira.student;
 
-import oy.interact.tira.model.Coder;
 import oy.interact.tira.util.Pair;
 import oy.interact.tira.util.TIRAKeyedContainer;
 
@@ -9,9 +8,10 @@ import java.util.function.Predicate;
 public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyedContainer<K, V> {
 
     private Node<K, V>[] itemArray; // An array of linked lists
-    private static final int DEFAULT_ARRAY_SIZE = 2000000; // Default array size
-    private int size = 0; // The amount of elements in hash table array
-    public int collisions = 0;
+    private static int TABLE_SIZE = 40; // Default array size
+    private int size; // Amount of elements in hash table array
+    private int collisions; // Amount of chaining operations in hash table (linked lists)
+    private final float fillRate = 0.75f; // Maximum portion of the table allowed to fill
 
     private static class Node<K extends Comparable<K>, V> {
         Pair<K, V> data;
@@ -26,7 +26,9 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
     // Constructor for hash table
     @SuppressWarnings("unchecked")
     public HashTableContainer() {
-        this.itemArray = new Node[DEFAULT_ARRAY_SIZE];
+        this.itemArray = new Node[TABLE_SIZE];
+        this.size = 0;
+        this.collisions = 0;
     }
 
     /* Helper method to calculate hash index in range of 0 <= hashIndex < array.length
@@ -46,6 +48,9 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
         }
 
         try {
+            // Check the fill rate of the table
+            ensureCapacity(itemArray.length);
+
             // Calculates the final hash index limited to table size
             int hashIndex = hashFunction(key);
 
@@ -147,14 +152,35 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
 
     @Override
     public void ensureCapacity(int capacity) throws OutOfMemoryError, IllegalArgumentException {
+        if (((float) size / capacity) > fillRate) {
+            // Multiply hash table capacity according to fill rate
+            reallocate((float) capacity * (1f + fillRate));
+        }
+    }
 
+    @SuppressWarnings("unchecked")
+    private void reallocate(float newCapacity) {
+        try {
+            Pair<K, V>[] oldArray = toArray(); // Copy elements from original array
+            TABLE_SIZE = (int) newCapacity;
+            clear(); // Reset original hash table array
+
+            // In reallocation, indexes need to be recalculated & elements put to new places
+            for (Pair<K, V> keyValuePair : oldArray) {
+                add(keyValuePair.getKey(), keyValuePair.getValue());
+            }
+        } catch (Exception e) {
+            System.out.println("**ERROR** Could not reallocate hash table array.");
+            e.printStackTrace();
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void clear() {
         size = 0;
-        itemArray = new Node[DEFAULT_ARRAY_SIZE];
+        collisions = 0;
+        itemArray = new Node[TABLE_SIZE];
     }
 
     @Override
