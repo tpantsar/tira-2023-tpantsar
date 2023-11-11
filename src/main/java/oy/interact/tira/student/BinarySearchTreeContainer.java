@@ -168,19 +168,21 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
     @Override
     public Pair<K, V>[] toArray() {
         Pair<K, V>[] resultArray = (Pair<K, V>[]) new Pair[size];
-        int[] index = {0};
-        toArrayInOrder(root, resultArray, index);
-        return resultArray;
-    }
+        StackImplementation<Node> stack = new StackImplementation<>(size);
+        int index = 0;
+        Node current = root;
 
-    // Helper method for in-order traversal and filling the array
-    private void toArrayInOrder(Node node, Pair<K, V>[] array, int[] index) {
-        if (node == null) {
-            return;
+        while (current != null || !stack.isEmpty()) {
+            while (current != null) {
+                stack.push(current);
+                current = current.leftChild;
+            }
+            current = stack.pop();
+            resultArray[index++] = new Pair<>(current.key, current.value);
+            current = current.rightChild;
         }
-        toArrayInOrder(node.leftChild, array, index); // Traverse the left subtree
-        array[index[0]++] = new Pair<>(node.key, node.value);
-        toArrayInOrder(node.rightChild, array, index); // Traverse the right subtree
+
+        return resultArray;
     }
 
     @Override

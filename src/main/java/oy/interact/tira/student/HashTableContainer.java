@@ -158,7 +158,6 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void reallocate(float newCapacity) {
         try {
             Pair<K, V>[] oldArray = toArray(); // Copy elements from original array
@@ -166,7 +165,8 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
             clear(); // Reset original hash table array
 
             // In reallocation, indexes need to be recalculated & elements put to new places
-            for (Pair<K, V> keyValuePair : oldArray) {
+            for (int i = 0; i < oldArray.length; i++) {
+                Pair<K, V> keyValuePair = oldArray[i];
                 add(keyValuePair.getKey(), keyValuePair.getValue());
             }
         } catch (Exception e) {
@@ -189,8 +189,8 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
         Pair<K, V>[] resultArray = (Pair<K, V>[]) new Pair[size];
         int resultArrayIndex = 0; // Index for temporary array
 
-        for (Node<K, V> keyValueNode : itemArray) {
-            Node<K, V> current = keyValueNode;
+        for (int i = 0; i < itemArray.length; i++) {
+            Node<K, V> current = itemArray[i];
             while (current != null) {
                 resultArray[resultArrayIndex++] = new Pair<>(current.data.getKey(), current.data.getValue());
                 current = current.next;
