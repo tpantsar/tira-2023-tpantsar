@@ -55,21 +55,36 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
             int hashIndex = hashFunction(key);
 
             if (itemArray[hashIndex] != null && itemArray[hashIndex].data.getKey().equals(key)) {
-                // Duplicate keys found
-                itemArray[hashIndex] = new Node<>(new Pair<>(key, value));
+                // Duplicate keys found in first node, replace current key-value pair with new key-value pair
+                itemArray[hashIndex].data = new Pair<>(key, value);
             } else if (itemArray[hashIndex] == null) {
                 // Empty index found
                 itemArray[hashIndex] = new Node<>(new Pair<>(key, value));
-                size++; // Increase container size by one, after adding new element
+                size++; // Increase container size by one, after adding new node
             } else {
-                // Collision, chain elements using linked lists
+                // Collision, chain elements using linked lists or replace key-value pair if needed
                 Node<K, V> current = itemArray[hashIndex];
+                boolean keyFoundFromLinkedList = false;
+
+                // Traverse the linked list and search for possible identical key
                 while (current.next != null) {
-                    current = current.next; // Iterate to the last link
+                    // If the key is found from linked list, replace it with new key-value pair
+                    // Hash table size does not increase in this case
+                    if (current.next.data.getKey().equals(key)) {
+                        keyFoundFromLinkedList = true;
+                        current.next.data = new Pair<>(key, value);
+                        break;
+                    } else {
+                        current = current.next;
+                    }
                 }
-                current.next = new Node<>(new Pair<>(key, value));
-                collisions++;
-                size++; // Increase container size by one, after adding new element
+
+                // If the key with same hash index is not found from linked list, add new node to the end
+                if (!keyFoundFromLinkedList) {
+                    current.next = new Node<>(new Pair<>(key, value));
+                    collisions++; // Increase collisions by one since new node is added
+                    size++; // Increase container size by one, after adding new node
+                }
             }
         } catch (OutOfMemoryError e) {
             System.out.println("\n*** ERROR: Run out of memory while adding key-value pairs to container\n");
