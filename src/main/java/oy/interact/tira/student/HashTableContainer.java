@@ -10,8 +10,8 @@ public class HashTableContainer<K extends Comparable<K>, V> implements TIRAKeyed
     private Node<K, V>[] itemArray; // An array of linked lists
     private static int TABLE_SIZE = 40; // Default array size
     private int size; // Amount of elements in hash table array
-    private int collisions; // Amount of chaining operations in hash table (linked lists)
-    private final float fillRate = 0.75f; // Maximum portion of the table allowed to fill
+    public int collisions; // Amount of chaining operations in hash table (linked lists)
+    private final float fillRate = 0.65f; // Maximum portion of the table allowed to fill
 
     private static class Node<K extends Comparable<K>, V> {
         Pair<K, V> data;

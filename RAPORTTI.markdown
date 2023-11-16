@@ -319,9 +319,14 @@ Sain toimimaan lapsisolmujen lukumäärän laskemisen, mutta sen avulla koodarei
 Binäärisen hakupuun toimintaperiaate on loppupeleissä melko yksinkertainen, mutta sen opettelu ja sisäistäminen vei
 yllättävän paljon aikaa.
 
+Ihmettelin myös, miksi lajittelujärjestyksen vaihtaminen ei toiminut sen jälkeen, kun olin toteuttanut BST:n.
+Syynä oli yksinkertaisesti se, että käytin Comparablen `compareTo` -metodia comparator-rajapinnan sijaan.
+Ratkaisuna oli käyttää luokan jäsenmuuttujaa `private Comparator<K> comparator` hyväksi, joka annetaan myös bst-luokan
+muodostimelle parametriksi. Tämän jälkeen `comparator.compare()` -vertailua käyttämällä lajittelujärjestyksen
+vaihtaminen alkoi toimimaan. 
+
 Päätin olla hyödyntämättä `TreeNode` -luokkaa ja tein BST:lle oman Node-luokan, joka sisältää `add` ja `bstSearch`
--metodit. Lisäksi, Comparator-rajapinnan sijaan hyödynsin olioiden vertailussa Comparable-rajapintaa, joka laajentaa jo
-valmiiksi `BinarySearchTreeContainer` -luokkaa.
+-metodit.
 
 Toteutin työssä vaadittavat algoritmit A-metodilla, eli rekursiivisella in-order läpikäynnillä. Tämän
 aikakompleksisuusluokka on O(n). Rekursiivinen toteutus on vaihtoehdoista yksinkertaisin, joten valitsin sen.
@@ -342,15 +347,19 @@ Laskin binääripuiden syvyyden aineiston koon perusteella:
 | 100 000       | 37     |
 | 1 000 000     | 50     |
 
-> **BSTPerformanceTests** aikamittauksia ja kuvaajia in-order toteutukselle. Huomataan, että taulukkototeutukseen verrattuna lisäysaika (Add time)
-> ja lajittelu (To sorted array time) olivat nopeampia. Vastaavasti, binäärinen hakupuu oli erittäin hidas, kun puusta haettiin
+> **BSTPerformanceTests** aikamittauksia ja kuvaajia in-order toteutukselle. Huomataan, että taulukkototeutukseen
+> verrattuna lisäysaika (Add time)
+> ja lajittelu (To sorted array time) olivat nopeampia. Vastaavasti, binäärinen hakupuu oli erittäin hidas, kun puusta
+> haettiin
 > avain-arvo paria tietyllä indeksillä -> `getIndex(index)`. 100 000 aineiston kohdalla haku kesti noin 78 sekuntia!
-> Tämä johtuu siitä, että nykyinen toteutus käy pahimmassa tapauksessa koko puun läpi, ennen kuin se löytää indeksiä vastaavan
+> Tämä johtuu siitä, että nykyinen toteutus käy pahimmassa tapauksessa koko puun läpi, ennen kuin se löytää indeksiä
+> vastaavan
 > elementin. Eli silloin, kun etsitään esim. puun viimeistä indeksiä.
 
 <img src="images/BSTPerformanceTests_graphs.png" alt="BST Graphs" width="1500"/>
 
-> **SimpleContainerPerformanceTests** aikamittauksia ja kuvaajia. Binäärinen hakupuu ja taulukkototeutus olivat suunnilleen yhtä nopeita, kun aineistosta haettiin jotain arvoa (value) tietyllä
+> **SimpleContainerPerformanceTests** aikamittauksia ja kuvaajia. Binäärinen hakupuu ja taulukkototeutus olivat
+> suunnilleen yhtä nopeita, kun aineistosta haettiin jotain arvoa (value) tietyllä
 > avaimella (key) -> Search time (ms)
 
 <img src="images/SimpleContainerPerformanceTests_graphs.png" alt="SimpleContainer Graphs" width="1500"/>
@@ -401,6 +410,61 @@ Sitten, kun `currentIndex == index` -ehto toteutuu, niin metodi palauttaa uuden 
 
 ## 08-TASK
 
+Linkitetyn listan solmujen hallinta osoittautui melko haasteelliseksi, kun koodista laskettiin sanoja ja päivitettiin
+tietyn sanan esiintymisarvoa: CodeWordsCounter-luokassa.
+Koodissani oli esimerkiksi bugi, että törmäyksen (collision) sattuessa päivitin vahingossa koko linkitetyn listan
+tietystä indeksistä uudelleen `itemArray[hashIndex] = new Node<>(new Pair<>(key, value));` jolloin next-viittaukset
+poistuivat kokonaan ja taulukon koko (`size`) jäi suuremmaksi, mitä siellä oikeasti oli elementtejä -> ja ratkaisuna
+olikin yksinkertaisesti viitata vain solmun data-elementtiin ja korvata se uudella avain-arvo parilla
+`itemArray[hashIndex].data = new Pair<>(key, value);` jolloin linkitetyn listan viittaukset seuraaviin solmuihin
+säilyivät.
+
+Toinen kysymysmerkki, jota ihmettelin jonkin aikaa, liittyi koodin avainsanojen esiintymismäärän lajitteluun.
+`CodeWordsCounter.topCodeWords` -metodissa muodostetaan sanoista taulukko, jonka jälkeen se pitää lajitella laskevaan
+järjestykseen. Tein oman `CodeWordsComparator` -luokan, jossa vertaillaan sanoja ja niiden esiintymislukumääriä
+pareina -> `Pair<String, Integer>`. Sen jälkeen nopealle lajittelualgoritmille annettiin lajittelematon taulukko ja
+vertailija päinvastaisella järjestyksellä -> `Algorithms.fastSort(wordsArray, wordsComparator.reversed())` ja rajattiin
+yleisimmät sanat `topCount` mukaisesti, esim. top 100 sanaa.
+
+TIRA Coders Appin mukaan käytetyimmät sanat omassa tira-projektissani, src-hakemistossa:
+
+<img src="images/topWords_hashTable.png" alt="Top code words hashTable" width="1500"/>
+
+**Hajautustaulun nopeustestien tuloksia (HashTablePerformanceTests):**
+
+<img src="images/HashTablePerformanceTests.png" alt="HashTablePerformanceTests" width="1500"/>
+
+**Taulukkolajittelun nopeustestien tuloksia (SimpleKeyedTablePerformanceTests):**
+
+> Huomaa, että taulukon asteikko loppuu jo 100 000 aineistoon saakka, koska taulukkopohjainen toteutus hidastui
+> merkittävästi tämän rajapyykin jälkeen. HashTablePerformanceTests-graafissa on mittaukset 2 000 000 aineistoon saakka. 
+
+<img src="images/SimpleKeyedTablePerformanceTests.png" alt="SimpleKeyedTablePerformanceTests" width="1500"/>
+
+SimpleKeyedTablePerformanceTests suoritus hidastui merkittävästi jo 100 000 aineiston jälkeen.
+Hakuaika (Search time) 100 000 json-elementin joukosta kesti jo 100 sekuntia, joka on äärimmäisen hidasta.
+Hajautustaulun haku 100 000 json-elementin kohdalla kesti vain 20 ms, ja 2 000 000 elementin kohdalla 619 ms.
+Toisaalta, taulukkototeutuksessa lisäysaika (Add time) ja lajittelu (To array and sorting) olivat hieman nopeampia
+hajautustauluun verrattuna, linkitetyn listan käytön vuoksi. Hajautustaulussa törmäyksiä (chaining) tapahtuu melko
+paljon, jolloin samaan indeksiin linkitetään uusi solmu. 
+
+BST:n in-order haku (78 sekuntia) on oletettavasti hitaampi, kuin hajautustaulun haku (20 ms) 100 000 aineistolla.
+Toisaalta, jos BST:n tekee D-toteutuksella hyödyntäen lapsisolmujen lukumäärää, hakuajat olisivat likimain yhtä nopeita.
+Toisaalta, BST pärjää hajautustaulua nopeammin taulukon muodostamisessa ja sen lajittelussa (To array and sorting).
+100 000 aineiston kohdalla hajautustaululta kului siihen 1401 ms, kun taas binäärinen hakupuu käytti vain 2 ms!
+Tämä johtuu esimerkiksi siitä, että toteutin hajautustaulun linkitettynä listana, jolloin solmujen välinen hallinta
+kuluttaa muistia ja hidastaa lajittelunopeutta.
+
+Hajautustaulun, joka hyödyntää linkitettyä listaa, aikakompleksisuus on keskimäärin `O(1 + n/m)`, missä
+`n/m` on taulukon täyttöaste (fill factor). Taulukon täyttöaste kuvaa sitä, kuinka suuri osa hajautustaulun indekseistä
+saa olla käytössä taulukon kapasiteettiin nähden (yleensä 65% - 75%). Eli mitä suurempi täyttöaste, sen hitaammaksi
+hajautustaulu menee, koska linkitettyjen solmujen määrä kasvaa.
+
+Hajautustaulu (myös linkitetty) on nopeampi normaaliin taulukkototeutukseen verrattuna, kun aineiston koko on suuri. Jos
+lisättävien elementtien määrä tiedetään etukäteen, hajautustaulun koko voidaan määrittää yhtä suureksi ja reallokointia
+ei tarvita. Vastaavasti, hajautustaulun aikatehokkuus ei ole niin hyvä pienen aineistokoon kanssa. Reallokointi hidastaa
+taulukkoa ja kuluttaa muistia, koska kaikille vanhan taulukon elementeille pitää laskea indeksit (tiivisteet) uudelleen,
+uuteen taulukkoon lisätessä.
 
 
 

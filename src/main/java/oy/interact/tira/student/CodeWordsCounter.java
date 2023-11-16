@@ -123,7 +123,7 @@ public class CodeWordsCounter {
 			result[0] = new Pair<>("Hashtable not implemented yet", 0);
 			return result;
 		}
-		// STUDENTS: TODO: Implement this pseudocode to get the top words sorted by frequency of use from hash table.
+		// STUDENTS: Implement this pseudocode to get the top words sorted by frequency of use from hash table.
 		// 1. Get, from the hash table, pairs of all words and word counts from hash table to an array.
 		// 2. Use your fast sort algorithm to sort the array of pairs by word count, descending (!) order,
 		//    so that the word that is most frequent, is the first in the array.
@@ -147,7 +147,7 @@ public class CodeWordsCounter {
 			resultArray[i] = wordsArray[i];
 		}
 
-		return resultArray; // TODO: return the array of codeword/count pairs.
+		return resultArray;
 	}
 
 }

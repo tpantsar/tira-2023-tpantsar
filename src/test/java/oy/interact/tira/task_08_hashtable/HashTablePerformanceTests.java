@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Timeout;
 import oy.interact.tira.factories.HashTableFactory;
 import oy.interact.tira.model.Coder;
 import oy.interact.tira.student.Algorithms;
+import oy.interact.tira.student.HashTableContainer;
 import oy.interact.tira.util.JSONConverter;
 import oy.interact.tira.util.Pair;
 import oy.interact.tira.util.TIRAKeyedContainer;
