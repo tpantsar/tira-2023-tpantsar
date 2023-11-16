@@ -314,6 +314,7 @@ Kokonaiskesto esim. 50 000 elementin json-tiedoston lajittelulle nopeutui n. **4
 
 ## 07-TASK
 
+
 Ylivoimaisesti vaikeinta BST:n toteutuksessa oli getIndex(int index) metodin toteuttaminen, joka vei eniten aikaa.
 Sain toimimaan lapsisolmujen lukumäärän laskemisen, mutta sen avulla koodareiden hakua listasta en.
 Binäärisen hakupuun toimintaperiaate on loppupeleissä melko yksinkertainen, mutta sen opettelu ja sisäistäminen vei
@@ -410,6 +411,7 @@ Sitten, kun `currentIndex == index` -ehto toteutuu, niin metodi palauttaa uuden 
 
 ## 08-TASK
 
+
 Linkitetyn listan solmujen hallinta osoittautui melko haasteelliseksi, kun koodista laskettiin sanoja ja päivitettiin
 tietyn sanan esiintymisarvoa: CodeWordsCounter-luokassa.
 Koodissani oli esimerkiksi bugi, että törmäyksen (collision) sattuessa päivitin vahingossa koko linkitetyn listan
@@ -426,9 +428,9 @@ pareina -> `Pair<String, Integer>`. Sen jälkeen nopealle lajittelualgoritmille 
 vertailija päinvastaisella järjestyksellä -> `Algorithms.fastSort(wordsArray, wordsComparator.reversed())` ja rajattiin
 yleisimmät sanat `topCount` mukaisesti, esim. top 100 sanaa.
 
-TIRA Coders Appin mukaan käytetyimmät sanat omassa tira-projektissani, src-hakemistossa:
+**TIRA Coders Appin mukaan käytetyimmät sanat omassa tira-projektissani, src-hakemistossa:**
 
-<img src="images/topWords_hashTable.png" alt="Top code words hashTable" width="1500"/>
+<img src="images/topWords_hashTable.png" alt="Top code words hashTable" width="1000"/>
 
 **Hajautustaulun nopeustestien tuloksia (HashTablePerformanceTests):**
 
@@ -437,7 +439,7 @@ TIRA Coders Appin mukaan käytetyimmät sanat omassa tira-projektissani, src-hak
 **Taulukkolajittelun nopeustestien tuloksia (SimpleKeyedTablePerformanceTests):**
 
 > Huomaa, että taulukon asteikko loppuu jo 100 000 aineistoon saakka, koska taulukkopohjainen toteutus hidastui
-> merkittävästi tämän rajapyykin jälkeen. HashTablePerformanceTests-graafissa on mittaukset 2 000 000 aineistoon saakka. 
+> merkittävästi tämän rajapyykin jälkeen. Ylempänä HashTablePerformanceTests-graafissa on mittaukset 2 000 000 aineistoon saakka. 
 
 <img src="images/SimpleKeyedTablePerformanceTests.png" alt="SimpleKeyedTablePerformanceTests" width="1500"/>
 
@@ -446,7 +448,8 @@ Hakuaika (Search time) 100 000 json-elementin joukosta kesti jo 100 sekuntia, jo
 Hajautustaulun haku 100 000 json-elementin kohdalla kesti vain 20 ms, ja 2 000 000 elementin kohdalla 619 ms.
 Toisaalta, taulukkototeutuksessa lisäysaika (Add time) ja lajittelu (To array and sorting) olivat hieman nopeampia
 hajautustauluun verrattuna, linkitetyn listan käytön vuoksi. Hajautustaulussa törmäyksiä (chaining) tapahtuu melko
-paljon, jolloin samaan indeksiin linkitetään uusi solmu. 
+paljon, jolloin samaan indeksiin linkitetään uusi solmu. Tämän vuoksi hajautustaulun muuttaminen normaaliksi taulukoksi
+kestää hieman kauemmin.
 
 BST:n in-order haku (78 sekuntia) on oletettavasti hitaampi, kuin hajautustaulun haku (20 ms) 100 000 aineistolla.
 Toisaalta, jos BST:n tekee D-toteutuksella hyödyntäen lapsisolmujen lukumäärää, hakuajat olisivat likimain yhtä nopeita.
@@ -465,8 +468,6 @@ lisättävien elementtien määrä tiedetään etukäteen, hajautustaulun koko v
 ei tarvita. Vastaavasti, hajautustaulun aikatehokkuus ei ole niin hyvä pienen aineistokoon kanssa. Reallokointi hidastaa
 taulukkoa ja kuluttaa muistia, koska kaikille vanhan taulukon elementeille pitää laskea indeksit (tiivisteet) uudelleen,
 uuteen taulukkoon lisätessä.
-
-
 
 
 ## 09-TASK
