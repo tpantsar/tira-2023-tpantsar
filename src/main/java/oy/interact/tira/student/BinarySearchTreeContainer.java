@@ -40,28 +40,40 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
         // Utilizes comparator for comparing objects, returns depth of the added node in tree
         private int add(Node node, int depth) {
             if (this.value.equals(node.value)) {
-                // If added value is identical in BST, update the node and remove duplicate values
+                // If added value is identical in BST, update the node's key-value pair. Size remains the same.
                 this.key = node.key;
                 this.value = node.value;
-                size--;
                 return depth;
             } else if (comparator.compare(node.key, this.key) < 0) {
-                if (this.leftChild == null) {
+                if (this.leftChild == null) { // Add new node
                     this.childCount++;
                     this.leftChild = node;
+                    size++;
                     return depth + 1;
                 } else {
                     this.childCount++;
                     return this.leftChild.add(node, depth + 1);
                 }
             } else if (comparator.compare(node.key, this.key) > 0) {
-                if (this.rightChild == null) {
+                if (this.rightChild == null) { // Add new node
                     this.childCount++;
                     this.rightChild = node;
+                    size++;
                     return depth + 1;
                 } else {
                     this.childCount++;
                     return this.rightChild.add(node, depth + 1);
+                }
+            } else if (comparator.compare(node.key, this.key) == 0) {
+                // Duplicate keys should be allowed to add to the BST tree
+                if (this.leftChild == null) { // Add new node to leftChild by default
+                    this.childCount++;
+                    this.leftChild = node;
+                    size++;
+                    return depth + 1;
+                } else {
+                    this.childCount++;
+                    return this.leftChild.add(node, depth + 1);
                 }
             }
             return depth;
@@ -88,13 +100,13 @@ public class BinarySearchTreeContainer<K extends Comparable<K>, V> implements TI
 
         if (root == null) {
             root = node;
+            size++;
         } else {
             int nodeDepth = root.add(node, 0);
             if (nodeDepth > this.maxDepth) {
                 maxDepth = nodeDepth;
             }
         }
-        this.size++;
     }
 
     @Override

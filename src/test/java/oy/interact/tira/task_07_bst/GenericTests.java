@@ -183,7 +183,7 @@ public class GenericTests {
         String uuid2 = UUID.randomUUID().toString();
         assertDoesNotThrow(() -> bst.add(uuid1, 42), "Adding to BST must not throw");
         assertDoesNotThrow(() -> bst.add(uuid2, 42), "Adding to BST must not throw");
-        assertEquals(1, bst.size(), "After adding two identical keys, BST size must be one (1)");
+        assertEquals(1, bst.size(), "After adding two identical values, BST size must be one (1)");
         assertDoesNotThrow(() -> testValue = bst.find(intValue -> intValue.equals(42)));
         assertNotNull(testValue, "Value must be in the dictionary in this test");
         assertEquals(42, testValue, "Added value should be in BST when adding value twice with different keys");
