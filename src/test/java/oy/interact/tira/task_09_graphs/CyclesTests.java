@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import oy.interact.tira.student.graph.Graph;
 import oy.interact.tira.student.graph.Vertex;
@@ -14,9 +15,10 @@ import oy.interact.tira.student.graph.Edge.EdgeType;
  * Basic unit tests for the Graph class.
  * Tests if the graph has the vertices and edges it should have.
  */
-public class CyclesTests {
+class CyclesTests {
 
     @Test 
+    // @Timeout(value = 60, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
     void testConnectedUndirectedGraph()
     {
         IntegerTestGraph testGraph = IntegerTestGraph.createSimpleUndirectedGraph();
@@ -25,6 +27,7 @@ public class CyclesTests {
     }
 
     @Test 
+    // @Timeout(value = 60, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
     void testConnectedDirectedGraph()
     {
         IntegerTestGraph testGraph = IntegerTestGraph.createSimpleDirectedGraph();
@@ -35,6 +38,7 @@ public class CyclesTests {
     }
 
     @Test 
+    // @Timeout(value = 60, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
     void testDisconnectedUndirectedGraph()
     {
         IntegerTestGraph testGraph = IntegerTestGraph.createSimpleUndirectedDisconnectedGraph();
@@ -43,12 +47,15 @@ public class CyclesTests {
     }
 
     @Test
+    // @Timeout(value = 60, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
     void testDirectedGraphWithCycles() {
         IntegerTestGraph testGraph = IntegerTestGraph.createGraphForDijkstraSearch();
         assertNotNull(testGraph, () -> "Test graph not created");
+        assertTrue(testGraph.hasCycles(EdgeType.DIRECTED, null), "This graph has cycles");
     }
 
     @Test
+    // @Timeout(value = 60, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
     void testFinnishTrainStationsGraph() {
         Graph<String> testGraph = StringTestGraph.createFinlandTrainNetworks();
         assertNotNull(testGraph, "Test graph not created");
