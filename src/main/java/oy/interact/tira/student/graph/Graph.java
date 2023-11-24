@@ -3,6 +3,7 @@ package oy.interact.tira.student.graph;
 import java.util.*;
 
 import oy.interact.tira.student.ArrayQueue;
+import oy.interact.tira.student.StackImplementation;
 import oy.interact.tira.student.graph.Edge.EdgeType;
 
 import java.io.IOException;
@@ -150,21 +151,28 @@ public class Graph<T> {
      */
     public List<Vertex<T>> breadthFirstSearch(Vertex<T> from, Vertex<T> target) { // TODO: Student, implement this.
         ArrayQueue<Vertex<T>> queue = new ArrayQueue<>(); // Vertices to visit next
-        Set<Vertex<T>> enqueued = new HashSet<>();
+        Set<Vertex<T>> enqueued = new HashSet<>(); // Vertices already found and marked to be visited
         List<Vertex<T>> visited = new ArrayList<>(); // All visited vertices
 
         queue.enqueue(from);
         enqueued.add(from);
 
         while (!queue.isEmpty()) {
-            Vertex<T> vertex = queue.dequeue(); // Take the next vertex and remove it from queue
-            visited.add(getVertexFor(vertex.getElement())); // Add it to the visited
-            List<Edge<T>> neighborEdges = getEdges(vertex); // Find the edges of this vertex; where can we go from here.
+            Vertex<T> currentVertex = queue.dequeue(); // Take the next vertex and remove it from queue
+            visited.add(currentVertex); // Add the vertex to the visited
 
-            // for loop
+            // Find the edges of this vertex; where can we go from here.
+            List<Edge<T>> neighborEdges = getEdges(currentVertex);
+
+            for (Edge<T> edge : neighborEdges) {
+                Vertex<T> neighborVertex = edge.getDestination();
+                if (!enqueued.contains(neighborVertex)) {
+                    queue.enqueue(neighborVertex);
+                    enqueued.add(neighborVertex);
+                }
+            }
         }
-
-        return visited;
+        return visited; // All the vertices in the order they were found, breadth first.
     }
 
     /**
@@ -179,9 +187,39 @@ public class Graph<T> {
      * @return Returns all the visited vertices traversed while doing DFS.
      */
     public List<Vertex<T>> depthFirstSearch(Vertex<T> from, Vertex<T> target) {
-        List<Vertex<T>> visited = new ArrayList<>();
-        // TODO: Student, implement this.
-        return visited;
+        StackImplementation<Vertex<T>> stack = new StackImplementation<>(); // Vertices to depth search.
+        Set<Vertex<T>> pushed = new HashSet<>(); // Not yet handled in depth search
+        List<Vertex<T>> visited = new ArrayList<>(); // Vertices visited in depth search
+
+        stack.push(from); // Where to start from
+        pushed.add(from); // This is now (being) handled
+        visited.add(from); // And also visited
+
+        while (!stack.isEmpty()) {
+            // Find the edges of this vertex; where can we go from here.
+            List<Edge<T>> neighborEdges = getEdges(stack.peek());
+            if (neighborEdges.isEmpty()) {
+                stack.pop();
+                continue;
+            } else { // Vertex has edges to go
+                boolean continueOuter = false;
+                for (Edge<T> edge : neighborEdges) {
+                    Vertex<T> neighborVertex = edge.getDestination();
+                    if (!pushed.contains(neighborVertex)) {
+                        stack.push(neighborVertex);
+                        pushed.add(neighborVertex);
+                        visited.add(neighborVertex);
+                        continueOuter = true;
+                        break;
+                    }
+                }
+                if (continueOuter) {
+                    continue;
+                }
+            }
+            stack.pop();
+        }
+        return visited; // All the vertices in the order they were found, depth first.
     }
 
     /**
