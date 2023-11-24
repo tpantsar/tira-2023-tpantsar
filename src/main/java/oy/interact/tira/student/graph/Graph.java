@@ -2,6 +2,7 @@ package oy.interact.tira.student.graph;
 
 import java.util.*;
 
+import oy.interact.tira.student.ArrayQueue;
 import oy.interact.tira.student.graph.Edge.EdgeType;
 
 import java.io.IOException;
@@ -147,9 +148,22 @@ public class Graph<T> {
      * @param target An optional ending vertex, null if not given.
      * @return Returns all the visited vertices traversed while doing BFS, in order they were found, or an empty list.
      */
-    public List<Vertex<T>> breadthFirstSearch(Vertex<T> from, Vertex<T> target) {
-        List<Vertex<T>> visited = new ArrayList<>();
-        // TODO: Student, implement this.
+    public List<Vertex<T>> breadthFirstSearch(Vertex<T> from, Vertex<T> target) { // TODO: Student, implement this.
+        ArrayQueue<Vertex<T>> queue = new ArrayQueue<>(); // Vertices to visit next
+        Set<Vertex<T>> enqueued = new HashSet<>();
+        List<Vertex<T>> visited = new ArrayList<>(); // All visited vertices
+
+        queue.enqueue(from);
+        enqueued.add(from);
+
+        while (!queue.isEmpty()) {
+            Vertex<T> vertex = queue.dequeue(); // Take the next vertex and remove it from queue
+            visited.add(getVertexFor(vertex.getElement())); // Add it to the visited
+            List<Edge<T>> neighborEdges = getEdges(vertex); // Find the edges of this vertex; where can we go from here.
+
+            // for loop
+        }
+
         return visited;
     }
 
