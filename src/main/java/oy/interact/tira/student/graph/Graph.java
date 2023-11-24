@@ -39,7 +39,6 @@ public class Graph<T> {
      * depending on the application requirements.
      */
     public Graph() {
-        // TODO: Student: allocate necessary member variables.
         this.edgeList = new Hashtable<>();
     }
 
@@ -55,7 +54,7 @@ public class Graph<T> {
      * @param element The data item to put in the vertex of the graph.
      * @return Returns the created vertex, placed in the graph's edge list.
      */
-    public Vertex<T> createVertexFor(T element) { // TODO: Student, implement this.
+    public Vertex<T> createVertexFor(T element) {
         // Create the vertex object with the data item
         Vertex<T> vertex = new Vertex<>(element);
 
@@ -72,8 +71,7 @@ public class Graph<T> {
      * @return A Set with all the vertices of the graph.
      */
     public Set<Vertex<T>> getVertices() {
-        // TODO: Student, implement this.
-        return null;
+        return edgeList.keySet();
     }
 
     /**
@@ -86,7 +84,6 @@ public class Graph<T> {
      * @param weight      The weight of the edge.
      */
     public void addEdge(Edge.EdgeType type, Vertex<T> source, Vertex<T> destination, double weight) {
-        // TODO: Student, implement this.
         switch (type) {
             case DIRECTED:
                 // Add a directed edge to one direction
@@ -109,7 +106,6 @@ public class Graph<T> {
      * @param weight      The weight of the edge.
      */
     public void addDirectedEdge(Vertex<T> source, Vertex<T> destination, double weight) {
-        // TODO: Student, implement this.
         Edge<T> edge = new Edge<>(source, destination, weight);
         edgeList.get(source).add(edge);
     }
@@ -122,8 +118,7 @@ public class Graph<T> {
      * @return Returns the edges of the vertex or null if no edges from the source.
      */
     public List<Edge<T>> getEdges(Vertex<T> source) {
-        // TODO: Student, implement this.
-        return null;
+        return edgeList.get(source);
     }
 
     /**
@@ -135,8 +130,13 @@ public class Graph<T> {
      * @return The vertex containing the node, or null if no vertex contains the element.
      */
     public Vertex<T> getVertexFor(T element) {
-        // TODO: Student, implement this.
-        return null;
+        Set<Map.Entry<Vertex<T>, List<Edge<T>>>> entries = edgeList.entrySet();
+        for (Map.Entry<Vertex<T>, List<Edge<T>>> entry : entries) {
+            if (entry.getKey().getElement().equals(element)) {
+                return entry.getKey(); // Return the vertex containing the node
+            }
+        }
+        return null; // Return null if no vertex contains the element
     }
 
     /**
@@ -332,7 +332,7 @@ public class Graph<T> {
     }
 
     // STUDENTS: TODO: Uncomment the code below and use it as a sample on how
-    // to interate over vertices and edges in one situation.
+    // to iterate over vertices and edges in one situation.
     // If you use some other name for your edge list than edgeList, then
     // rename that in the code below! Otherwise you will have compiler errors.
 
