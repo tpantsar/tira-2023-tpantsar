@@ -360,7 +360,7 @@ public class Graph<T> {
         public boolean pathFound = false;
         public List<E> path;
         public int steps = 0;
-        public double totalWeigth = 0.0;
+        public double totalWeight = 0.0;
 
         @Override
         public String toString() {
@@ -368,7 +368,7 @@ public class Graph<T> {
             builder.append(String.format("Dijkstra result:\n- Path found: %s%n", (pathFound ? "yes" : "no")));
             if (pathFound) {
                 builder.append(String.format("- steps: %d%n", steps));
-                builder.append(String.format("- total edge weights: %.2f%n", totalWeigth));
+                builder.append(String.format("- total edge weights: %.2f%n", totalWeight));
                 if (null != path) {
                     builder.append(String.format("- path: %s", path.toString()));
                 } else {
@@ -393,7 +393,7 @@ public class Graph<T> {
         result.pathFound = false;
         result.path = null;
         result.steps = 0;
-        result.totalWeigth = 0.0;
+        result.totalWeight = 0.0;
         // TODO: Student, implement this.
         return result;
     }
@@ -413,12 +413,24 @@ public class Graph<T> {
     private List<Edge<T>> route(Vertex<T> toDestination, Map<Vertex<T>, Visit<T>> paths) {
         List<Edge<T>> path = new ArrayList<>();
         // TODO: Student, implement this.
+
+        Vertex<T> vertex = toDestination;
+
+        if (paths.isEmpty()) {
+            return path;
+        }
+        
+
         return path;
     }
 
     private double distance(Vertex<T> toDestination, Map<Vertex<T>, Visit<T>> viaPath) {
         double distance = 0.0;
         // TODO: Student, implement this.
+
+
+
+
         return distance;
     }
 
@@ -433,10 +445,18 @@ public class Graph<T> {
      * @see oy.tol.tira.graph.Graph#route(Vertex, Map)
      */
     private Map<Vertex<T>, Visit<T>> shortestPathsFrom(Vertex<T> start) {
+        // TODO: Student, implement this.
         Visit<T> visit = new Visit<>();
         visit.type = Visit.Type.START;
         Map<Vertex<T>, Visit<T>> paths = new HashMap<>();
-        // TODO: Student, implement this.
+
+        paths.put(start, visit);
+
+        // Create a priority queue sorting the vertices in the order of path distances from the vertex.
+        // PriorityQueue<Vertex<T>> priorityQueue = new PriorityQueue<>(comparator);
+
+
+
         return paths;
     }
 

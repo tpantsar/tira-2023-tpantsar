@@ -35,7 +35,7 @@ public class DijkstraSearchTests {
         }
         assertEquals(pathAsArray[pathAsArray.length - 1], result.path.get(result.path.size() - 1),
                 () -> "Destination was not the expected");
-        assertEquals(19, result.totalWeigth, () -> "Total weight of the shortest path was not the expected");
+        assertEquals(19, result.totalWeight, () -> "Total weight of the shortest path was not the expected");
 
     }
 
@@ -60,7 +60,7 @@ public class DijkstraSearchTests {
         Graph<String>.DijkstraResult<String> result = network.shortestPathDijkstra(oulu, turku);
         assertEquals(2, result.steps, "From Oulu to Turku shortest path is two steps: Oulu->Tampere->Turku");
         assertEquals(3, result.path.size(), "From Oulu to Turku shortest path is three vertices: Oulu->Tampere->Turku");
-        assertEquals(665, result.totalWeigth, "Kilometres from Oulu->Tampere->Turku must be 665");
+        assertEquals(665, result.totalWeight, "Kilometres from Oulu->Tampere->Turku must be 665");
         assertEquals("Oulu", result.path.get(0), "Starting vertex must be Oulu");
         assertEquals("Tampere", result.path.get(1), "Next vertex must be Tampere");
         assertEquals("Turku", result.path.get(2), "Next vertex must be Turku");
@@ -85,7 +85,7 @@ public class DijkstraSearchTests {
         Graph<String>.DijkstraResult<String> result = network.shortestPathDijkstra(oulu, vainikkala);
         assertEquals(2, result.steps, "From Oulu to Turku shortest path is two steps: Oulu->Kuopio->Vainikkala");
         assertEquals(3, result.path.size(), "From Oulu to Turku shortest path is three vertices: Oulu->Kuopio->Vainikkala");
-        assertEquals(719, result.totalWeigth, "Kilometres from Oulu->Kuopio->Vainikkala must be Vainikkala");
+        assertEquals(719, result.totalWeight, "Kilometres from Oulu->Kuopio->Vainikkala must be Vainikkala");
         assertEquals("Oulu", result.path.get(0), "Starting vertex must be Oulu");
         assertEquals("Kuopio", result.path.get(1), "Next vertex must be Kuopio");
         assertEquals("Vainikkala", result.path.get(2), "Next vertex must be Vainikkala");
