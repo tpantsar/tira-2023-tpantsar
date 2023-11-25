@@ -149,7 +149,7 @@ public class Graph<T> {
      * @param target An optional ending vertex, null if not given.
      * @return Returns all the visited vertices traversed while doing BFS, in order they were found, or an empty list.
      */
-    public List<Vertex<T>> breadthFirstSearch(Vertex<T> from, Vertex<T> target) { // TODO: Student, implement this.
+    public List<Vertex<T>> breadthFirstSearch(Vertex<T> from, Vertex<T> target) {
         ArrayQueue<Vertex<T>> queue = new ArrayQueue<>(); // Vertices to visit next
         Set<Vertex<T>> enqueued = new HashSet<>(); // Vertices already found and marked to be visited
         List<Vertex<T>> visited = new ArrayList<>(); // All visited vertices
@@ -166,6 +166,12 @@ public class Graph<T> {
 
             for (Edge<T> edge : neighborEdges) {
                 Vertex<T> neighborVertex = edge.getDestination();
+                if (null != target) {
+                    // search MUST be stopped when the target vertex is found.
+                    if (neighborVertex.equals(target)) {
+                        return visited;
+                    }
+                }
                 if (!enqueued.contains(neighborVertex)) {
                     queue.enqueue(neighborVertex);
                     enqueued.add(neighborVertex);
@@ -205,6 +211,12 @@ public class Graph<T> {
                 boolean continueOuter = false;
                 for (Edge<T> edge : neighborEdges) {
                     Vertex<T> neighborVertex = edge.getDestination();
+                    if (null != target) {
+                        // search MUST be stopped when the target vertex is found.
+                        if (neighborVertex.equals(target)) {
+                            return visited;
+                        }
+                    }
                     if (!pushed.contains(neighborVertex)) {
                         stack.push(neighborVertex);
                         pushed.add(neighborVertex);
@@ -228,14 +240,31 @@ public class Graph<T> {
      * <p>
      * If the graph is disconnected, the list contains all the elements _not_ visited,
      * doing a breadth first search from the vertex provided as the parameter.
-     * If the parameter is null, starts from the first vertice of the graph.
+     * If the parameter is null, starts from the first vertex of the graph.
      *
+     * @param toStartFrom Vertex to start investigating from. If null, start from the first vertex.
      * @return Returns non-empty list if the graph is disconnected, otherwise list is empty.
-     * @Param toStartFrom Vertex to start investigating from. If null, start from the first vertex.
      */
     public List<T> disconnectedVertices(Vertex<T> toStartFrom) {
         List<T> notInVisited = new ArrayList<>();
-        // TODO: Student, implement this.
+
+        if (isDisconnected(toStartFrom)) {
+            // Get all vertices
+            Set<Vertex<T>> vertices = getVertices();
+
+            // If toStartFrom is null, search starts from the first vertex
+            if (toStartFrom == null) {
+                toStartFrom = vertices.iterator().next();
+            }
+
+            // Do a breadth first search to get all vertices.
+            List<Vertex<T>> visited = breadthFirstSearch(toStartFrom, null);
+            for (Vertex<T> vertex : vertices) {
+                if (!visited.contains(vertex)) {
+                    notInVisited.add(vertex.getElement()); // Vertex was not visited, so add its element to the list.
+                }
+            }
+        }
         return notInVisited;
     }
 
@@ -247,8 +276,27 @@ public class Graph<T> {
      * @return True if the graph is disconnected.
      */
     public boolean isDisconnected(Vertex<T> toStartFrom) {
-        // TODO: Student, implement this.
-        return false;
+        // Get all vertices
+        Set<Vertex<T>> vertices = getVertices();
+
+        // If there are no vertices, it is not a disconnected graph.
+        if (vertices.isEmpty()) {
+            return false;
+        }
+
+        // If toStartFrom is null, search starts from the first vertex
+        if (toStartFrom == null) {
+            toStartFrom = vertices.iterator().next();
+        }
+
+        // Do a breadth first search to get all vertices.
+        List<Vertex<T>> visited = breadthFirstSearch(toStartFrom, null);
+        for (Vertex<T> vertex : vertices) {
+            if (!visited.contains(vertex)) {
+                return true; // One of all vertices was not visited, so graph is disconnected.
+            }
+        }
+        return false; // Graph is not disconnected
     }
 
     /**
@@ -266,8 +314,41 @@ public class Graph<T> {
      * @return Returns true if the graph has cycles.
      */
     public boolean hasCycles(EdgeType edgeType, Vertex<T> fromVertex) {
-        // TODO: Student, implement this.
-        return false;
+        Set<Vertex<T>> vertices = getVertices();
+
+        // If the graph is disconnected or is empty, return false
+        if (isDisconnected(fromVertex) || vertices.isEmpty()) {
+            return false;
+        }
+
+        // Iterator used to traverse the vertices set
+        Iterator<Vertex<T>> vertexIterator = getVertices().iterator();
+
+        // If fromVertex is not null, search starts from there.
+        // If fromVertex is null, search starts from the first vertex in a graph.
+        if (fromVertex != null) {
+            // Traverse vertices until fromVertex is found
+            while (vertexIterator.hasNext()) {
+                if (vertexIterator.next().equals(fromVertex)) {
+                    break;
+                }
+            }
+        }
+        return hasCyclesHelper(edgeType, vertexIterator, vertices);
+    }
+
+    // Helper method for finding cycles from a graph.
+    public boolean hasCyclesHelper(EdgeType edgeType, Iterator<Vertex<T>> iterator, Set<Vertex<T>> vertices) {
+        int edgeCount = 0;
+
+        while (iterator.hasNext()) {
+            Vertex<T> vertex = iterator.next();
+            edgeCount += getEdges(vertex).size();
+        }
+        if (edgeType == EdgeType.UNDIRECTED) {
+            edgeCount /= 2;
+        }
+        return vertices.size() - 1 != edgeCount;
     }
 
     // Dijkstra starts here.
@@ -320,7 +401,7 @@ public class Graph<T> {
 
     /**
      * Finds a route to a destination using paths already constructed.
-     * Before calling this method, cal {@link shortestPathsFrom} to construct
+     * Before calling this method, call {@link shortestPathsFrom} to construct
      * the paths from the staring vertex of Dijkstra algorithm.
      * <p>
      * A helper method for implementing the Dijkstra algorithm.
@@ -362,7 +443,7 @@ public class Graph<T> {
     // OPTIONAL task in the course!
 
     /**
-     * Do breadth-first-search on the grap and export vertices and edges to a dot file
+     * Do breadth-first-search on the graph and export vertices and edges to a dot file
      * <p>
      * Note that if the graph is disconnected, you must check if some vertices
      * were not visited and continue the BFS until _all_ vertices have been visited.
