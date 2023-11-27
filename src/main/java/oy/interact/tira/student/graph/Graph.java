@@ -3,6 +3,7 @@ package oy.interact.tira.student.graph;
 import java.util.*;
 
 import oy.interact.tira.student.ArrayQueue;
+import oy.interact.tira.student.HashTableContainer;
 import oy.interact.tira.student.StackImplementation;
 import oy.interact.tira.student.graph.Edge.EdgeType;
 
@@ -35,6 +36,7 @@ public class Graph<T> {
      * a suitable type of Map, depending on application needs.
      */
     private Map<Vertex<T>, List<Edge<T>>> edgeList = null;
+    private HashTableContainer<Integer, Vertex<T>> vertices = new HashTableContainer<>();
 
     /**
      * Constructor instantiates a suitable Map data structure
@@ -63,6 +65,7 @@ public class Graph<T> {
         // Create an empty list of edges and put the vertex and the empty list to the Map.
         List<Edge<T>> edges = new ArrayList<>();
         edgeList.put(vertex, edges);
+        vertices.add(element.hashCode(), vertex);
 
         return vertex;
     }
@@ -132,13 +135,7 @@ public class Graph<T> {
      * @return The vertex containing the node, or null if no vertex contains the element.
      */
     public Vertex<T> getVertexFor(T element) {
-        Set<Map.Entry<Vertex<T>, List<Edge<T>>>> entries = edgeList.entrySet();
-        for (Map.Entry<Vertex<T>, List<Edge<T>>> entry : entries) {
-            if (entry.getKey().getElement().equals(element)) {
-                return entry.getKey(); // Return the vertex containing the node
-            }
-        }
-        return null; // Return null if no vertex contains the element
+        return vertices.get(element.hashCode()); // Returns null if no vertex contains the element
     }
 
     /**
@@ -393,6 +390,8 @@ public class Graph<T> {
         public int compare(Vertex<T> left, Vertex<T> right) {
             // The order of the two vertices compared to each other depend on their distance from the start node
             // in the path
+
+            //return Double.compare(graph.distance(left, paths), graph.distance(right, paths));
             return (int) (graph.distance(left, paths) - graph.distance(right, paths));
         }
     }
@@ -503,12 +502,11 @@ public class Graph<T> {
             List<Edge<T>> edges = getEdges(vertex); // Get the edges of this vertex
             for (Edge<T> edge : edges) {
                 double weight = edge.getWeight();
-                Vertex<T> destinationVertex = edge.getDestination();
-                if (!paths.containsKey(destinationVertex) ||
-                        distance(vertex, paths) + weight < distance(destinationVertex, paths)) {
-                    paths.get(destinationVertex).type = Visit.Type.EDGE;
-                    paths.get(destinationVertex).edge = edge;
-                    priorityQueue.add(destinationVertex);
+                Vertex<T> edgeDestination = edge.getDestination();
+                if (!paths.containsKey(edgeDestination) ||
+                        distance(vertex, paths) + weight < distance(edgeDestination, paths)) {
+                    paths.put(edgeDestination, new Visit<>(Visit.Type.EDGE, edge));
+                    priorityQueue.add(edgeDestination);
                 }
             }
         }
@@ -563,25 +561,23 @@ public class Graph<T> {
      * @return The graph as a string.
      */
     @Override
-    public String toString() {
-        // TODO: Student.
-        return ""; // Remove this and uncomment code below when you are ready.
-        // StringBuilder output = new StringBuilder();
-        // for (Map.Entry<Vertex<T>, List<Edge<T>>> entry : edgeList.entrySet()) {
-        //    output.append("[");
-        //    output.append(entry.getKey().toString());
-        //    output.append("] -> [ ");
-        //    int counter = 0;
-        //    int count = entry.getValue().size();
-        //    for (Edge<T> edge : entry.getValue()) {
-        //       output.append(edge.getDestination().toString());
-        //       if (counter < count - 1) {
-        //          output.append(", ");
-        //       }
-        //       counter++;
-        //    }
-        //    output.append(" ]\n");
-        // }
-        // return output.toString();
+    public String toString() { // TODO: Student.
+        StringBuilder output = new StringBuilder();
+        for (Map.Entry<Vertex<T>, List<Edge<T>>> entry : edgeList.entrySet()) {
+            output.append("[");
+            output.append(entry.getKey().toString());
+            output.append("] -> [ ");
+            int counter = 0;
+            int count = entry.getValue().size();
+            for (Edge<T> edge : entry.getValue()) {
+                output.append(edge.getDestination().toString());
+                if (counter < count - 1) {
+                    output.append(", ");
+                }
+                counter++;
+            }
+            output.append(" ]\n");
+        }
+        return output.toString();
     }
 }

@@ -83,8 +83,8 @@ public class DijkstraSearchTests {
         Vertex<String> vainikkala = network.getVertexFor("Vainikkala");
         assertNotNull(vainikkala, "Turku should be in the train network as a vertex");
         Graph<String>.DijkstraResult<String> result = network.shortestPathDijkstra(oulu, vainikkala);
-        assertEquals(2, result.steps, "From Oulu to Turku shortest path is two steps: Oulu->Kuopio->Vainikkala");
-        assertEquals(3, result.path.size(), "From Oulu to Turku shortest path is three vertices: Oulu->Kuopio->Vainikkala");
+        assertEquals(2, result.steps, "From Oulu to Vainikkala shortest path is two steps: Oulu->Kuopio->Vainikkala");
+        assertEquals(3, result.path.size(), "From Oulu to Vainikkala shortest path is three vertices: Oulu->Kuopio->Vainikkala");
         assertEquals(719, result.totalWeight, "Kilometres from Oulu->Kuopio->Vainikkala must be Vainikkala");
         assertEquals("Oulu", result.path.get(0), "Starting vertex must be Oulu");
         assertEquals("Kuopio", result.path.get(1), "Next vertex must be Kuopio");
