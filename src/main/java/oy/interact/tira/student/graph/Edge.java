@@ -66,7 +66,7 @@ public class Edge<T> {
      * Gets the weight of the edge.
      * @return Edge's weight.
      */
-    public double getWeigth() {
+    public double getWeight() {
         return weight;
     }
 

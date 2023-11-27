@@ -56,25 +56,25 @@ public class BasicGraphTests {
             switch (vertex.getElement()) {
                 case 1:
                     assertEquals(1, edges.size(), () -> "Vertex does not have the expected number of edges");
-                    assertEquals(1.0, edges.get(0).getWeigth(), () -> "Edge weight was not correct");
+                    assertEquals(1.0, edges.get(0).getWeight(), () -> "Edge weight was not correct");
                     break;
                 case 2:
                     assertEquals(2, edges.size(), () -> "Vertex does not have the expected number of edges");
-                    double weight = edges.get(0).getWeigth() + edges.get(1).getWeigth();
+                    double weight = edges.get(0).getWeight() + edges.get(1).getWeight();
                     assertEquals(3.0, weight, () -> "Edge weight was not correct");
                     break;
                 case 3:
                     assertEquals(2, edges.size(), () -> "Vertex does not have the expected number of edges");
-                    weight = edges.get(0).getWeigth() + edges.get(1).getWeigth();
+                    weight = edges.get(0).getWeight() + edges.get(1).getWeight();
                     assertEquals(5.5, weight, () -> "Edge weight was not correct");
                     break;
                 case 4:
                     assertEquals(1, edges.size(), () -> "Vertex does not have the expected number of edges");
-                    assertEquals(11.5, edges.get(0).getWeigth(), () -> "Edge weight was not correct");
+                    assertEquals(11.5, edges.get(0).getWeight(), () -> "Edge weight was not correct");
                     break;
                 case 5:
                     assertEquals(1, edges.size(), () -> "Vertex does not have the expected number of edges");
-                    assertEquals(3.5, edges.get(0).getWeigth(), () -> "Edge weight was not correct");
+                    assertEquals(3.5, edges.get(0).getWeight(), () -> "Edge weight was not correct");
                     break;
                 default:
                     fail("Vertex ids should be 1..5");

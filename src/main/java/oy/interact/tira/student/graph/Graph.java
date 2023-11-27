@@ -379,6 +379,24 @@ public class Graph<T> {
         }
     }
 
+    class DistanceComparator implements Comparator<Vertex<T>> {
+        Graph<T> graph;
+        Map<Vertex<T>, Visit<T>> paths;
+
+        // Allocate the priority queue giving the graph and paths in the constructor
+        public DistanceComparator(Graph<T> graph, Map<Vertex<T>, Visit<T>> paths) {
+            this.graph = graph;
+            this.paths = paths;
+        }
+
+        @Override
+        public int compare(Vertex<T> left, Vertex<T> right) {
+            // The order of the two vertices compared to each other depend on their distance from the start node
+            // in the path
+            return (int) (graph.distance(left, paths) - graph.distance(right, paths));
+        }
+    }
+
     /**
      * Finds the shortest path from start to end using Dijkstra's algorithm.
      * <p>
@@ -394,7 +412,27 @@ public class Graph<T> {
         result.path = null;
         result.steps = 0;
         result.totalWeight = 0.0;
-        // TODO: Student, implement this.
+
+        // In Dijkstra, first call shortestPathsFrom() method, then call route()
+        // with the paths collected using this method, to get the shortest path to the destination.
+        Map<Vertex<T>, Visit<T>> viaPath = shortestPathsFrom(start);
+        List<Edge<T>> shortestPathToDestination = route(end, viaPath);
+
+        List<T> path = new ArrayList<>();
+        for (Edge<T> edge : shortestPathToDestination) {
+            path.add(edge.getDestination().getElement());
+        }
+
+        Vertex<T> lastVertex = shortestPathToDestination.get(shortestPathToDestination.size() - 1).getDestination();
+        result.pathFound = end.equals(lastVertex);
+        //result.pathFound = !shortestPathToDestination.isEmpty();
+
+        result.path = path;
+        result.steps = shortestPathToDestination.size();
+        result.totalWeight = distance(end, viaPath);
+
+        System.out.println(result.toString());
+
         return result;
     }
 
@@ -411,26 +449,28 @@ public class Graph<T> {
      * @return Returns the vertices forming the route to the destination.
      */
     private List<Edge<T>> route(Vertex<T> toDestination, Map<Vertex<T>, Visit<T>> paths) {
-        List<Edge<T>> path = new ArrayList<>();
-        // TODO: Student, implement this.
-
         Vertex<T> vertex = toDestination;
+        List<Edge<T>> path = new ArrayList<>();
 
         if (paths.isEmpty()) {
             return path;
         }
-        
-
+        Visit<T> visit = paths.get(vertex);
+        while (visit.type != Visit.Type.START) {
+            path.add(visit.edge);
+            vertex = visit.edge.getSource();
+            visit = paths.get(vertex);
+        }
         return path;
     }
 
+    // Calculates the distance to destination using given paths.
     private double distance(Vertex<T> toDestination, Map<Vertex<T>, Visit<T>> viaPath) {
+        List<Edge<T>> path = route(toDestination, viaPath);
         double distance = 0.0;
-        // TODO: Student, implement this.
-
-
-
-
+        for (Edge<T> edge : path) {
+            distance += edge.getWeight();
+        }
         return distance;
     }
 
@@ -445,18 +485,33 @@ public class Graph<T> {
      * @see oy.tol.tira.graph.Graph#route(Vertex, Map)
      */
     private Map<Vertex<T>, Visit<T>> shortestPathsFrom(Vertex<T> start) {
-        // TODO: Student, implement this.
         Visit<T> visit = new Visit<>();
         visit.type = Visit.Type.START;
         Map<Vertex<T>, Visit<T>> paths = new HashMap<>();
 
+        // First insert the starting visiting edge to the path.
         paths.put(start, visit);
 
         // Create a priority queue sorting the vertices in the order of path distances from the vertex.
-        // PriorityQueue<Vertex<T>> priorityQueue = new PriorityQueue<>(comparator);
+        PriorityQueue<Vertex<T>> priorityQueue = new PriorityQueue<>(new DistanceComparator(this, paths));
+        priorityQueue.add(start);
 
-
-
+        // Start from the starting vertex already in the queue.
+        while (!priorityQueue.isEmpty()) {
+            // Take the vertex having the shortest distance out and remove it from queue.
+            Vertex<T> vertex = priorityQueue.poll();
+            List<Edge<T>> edges = getEdges(vertex); // Get the edges of this vertex
+            for (Edge<T> edge : edges) {
+                double weight = edge.getWeight();
+                Vertex<T> destinationVertex = edge.getDestination();
+                if (!paths.containsKey(destinationVertex) ||
+                        distance(vertex, paths) + weight < distance(destinationVertex, paths)) {
+                    paths.get(destinationVertex).type = Visit.Type.EDGE;
+                    paths.get(destinationVertex).edge = edge;
+                    priorityQueue.add(destinationVertex);
+                }
+            }
+        }
         return paths;
     }
 

@@ -11,9 +11,9 @@ public class CoderFullNameComparator implements Comparator<Coder> {
      * Palauttaa koodareiden koko nimen vertailun lopputuloksen kutsujalle.
      * Hyödyntää Coder-luokan olemassaolevia metodeja.
      * Käyttää Comparator-rajapintaa Comparable:n sijaan.
-     * 
-     * @param o1
-     * @param o2
+     *
+     * @param coder1
+     * @param coder2
      * @return
      */
     public int compare(Coder coder1, Coder coder2) {
