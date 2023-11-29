@@ -246,8 +246,7 @@ public class Graph<T> {
         List<T> notInVisited = new ArrayList<>();
 
         if (isDisconnected(toStartFrom)) {
-            // Get all vertices
-            Set<Vertex<T>> vertices = getVertices();
+            Set<Vertex<T>> vertices = getVertices(); // Get all vertices
 
             // If toStartFrom is null, search starts from the first vertex
             if (toStartFrom == null) {
@@ -273,8 +272,7 @@ public class Graph<T> {
      * @return True if the graph is disconnected.
      */
     public boolean isDisconnected(Vertex<T> toStartFrom) {
-        // Get all vertices
-        Set<Vertex<T>> vertices = getVertices();
+        Set<Vertex<T>> vertices = getVertices(); // Get all vertices
 
         // If there are no vertices, it is not a disconnected graph.
         if (vertices.isEmpty()) {
@@ -311,7 +309,7 @@ public class Graph<T> {
      * @return Returns true if the graph has cycles.
      */
     public boolean hasCycles(EdgeType edgeType, Vertex<T> fromVertex) {
-        Set<Vertex<T>> vertices = getVertices();
+        Set<Vertex<T>> vertices = getVertices(); // Get all vertices
 
         // If the graph is disconnected or is empty, return false
         if (isDisconnected(fromVertex) || vertices.isEmpty()) {
@@ -337,7 +335,6 @@ public class Graph<T> {
     // Helper method for finding cycles from a graph.
     public boolean hasCyclesHelper(EdgeType edgeType, Iterator<Vertex<T>> iterator, Set<Vertex<T>> vertices) {
         int edgeCount = 0;
-
         while (iterator.hasNext()) {
             Vertex<T> vertex = iterator.next();
             edgeCount += getEdges(vertex).size();
@@ -376,6 +373,8 @@ public class Graph<T> {
         }
     }
 
+    // This class is used to compare vertices in the PriorityQueue,
+    // where the highest priority vertices are the ones with the least weight.
     class DistanceComparator implements Comparator<Vertex<T>> {
         Graph<T> graph;
         Map<Vertex<T>, Visit<T>> paths;
@@ -388,10 +387,8 @@ public class Graph<T> {
 
         @Override
         public int compare(Vertex<T> left, Vertex<T> right) {
-            // The order of the two vertices compared to each other depend on their distance from the start node
-            // in the path
-
-            //return Double.compare(graph.distance(left, paths), graph.distance(right, paths));
+            // The order of the two vertices compared to each other depend
+            // on their distance from the start node in the path
             return (int) (graph.distance(left, paths) - graph.distance(right, paths));
         }
     }
@@ -415,23 +412,31 @@ public class Graph<T> {
         // In Dijkstra, first call shortestPathsFrom() method, then call route()
         // with the paths collected using this method, to get the shortest path to the destination.
         Map<Vertex<T>, Visit<T>> viaPath = shortestPathsFrom(start);
+
+        // "NB: route() starts from the destination and then traverses the visits backwards using the source node,
+        // finishing to the start visit." -> 08-2 TIRA Graphs part 2 lectures
         List<Edge<T>> shortestPathToDestination = route(end, viaPath);
 
+        // --> We should then reverse the edge list to get the shortest path from START vertex
+        Collections.reverse(shortestPathToDestination);
+
+        // Create a new path array and insert starting vertex to it
         List<T> path = new ArrayList<>();
+        path.add(start.getElement());
+
+        // Add rest of the destination vertex elements to the path array list
         for (Edge<T> edge : shortestPathToDestination) {
             path.add(edge.getDestination().getElement());
         }
 
+        // Confirm that last destination vertex was the same as the ending parameter vertex
         Vertex<T> lastVertex = shortestPathToDestination.get(shortestPathToDestination.size() - 1).getDestination();
         result.pathFound = end.equals(lastVertex);
-        //result.pathFound = !shortestPathToDestination.isEmpty();
-
         result.path = path;
         result.steps = shortestPathToDestination.size();
         result.totalWeight = distance(end, viaPath);
 
         System.out.println(result.toString());
-
         return result;
     }
 
@@ -439,7 +444,7 @@ public class Graph<T> {
     /**
      * Finds a route to a destination using paths already constructed.
      * Before calling this method, call {@link shortestPathsFrom} to construct
-     * the paths from the staring vertex of Dijkstra algorithm.
+     * the paths from the starting vertex of Dijkstra algorithm.
      * <p>
      * A helper method for implementing the Dijkstra algorithm.
      *
@@ -448,6 +453,8 @@ public class Graph<T> {
      * @return Returns the vertices forming the route to the destination.
      */
     private List<Edge<T>> route(Vertex<T> toDestination, Map<Vertex<T>, Visit<T>> paths) {
+        // "NB: route() starts from the destination and then traverses the visits backwards using the source node,
+        // finishing to the start visit." -> 08-2 TIRA Graphs part 2 lectures
         Vertex<T> vertex = toDestination;
         List<Edge<T>> path = new ArrayList<>();
 
@@ -550,7 +557,7 @@ public class Graph<T> {
      * <p>
      * Simple graph as a string would look like this:<br/>
      * <pre>
-     * Created simple undirected graph where integers are vertice values:
+     * Created simple undirected graph where integers are vertex values:
      * [1] -> [ 2 ]
      * [2] -> [ 1, 3, 4, 5 ]
      * [3] -> [ 2, 4, 5 ]
@@ -561,7 +568,7 @@ public class Graph<T> {
      * @return The graph as a string.
      */
     @Override
-    public String toString() { // TODO: Student.
+    public String toString() {
         StringBuilder output = new StringBuilder();
         for (Map.Entry<Vertex<T>, List<Edge<T>>> entry : edgeList.entrySet()) {
             output.append("[");
