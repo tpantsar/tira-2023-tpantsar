@@ -3,7 +3,6 @@ package oy.interact.tira.student.graph;
 import java.util.*;
 
 import oy.interact.tira.student.ArrayQueue;
-import oy.interact.tira.student.HashTableContainer;
 import oy.interact.tira.student.StackImplementation;
 import oy.interact.tira.student.graph.Edge.EdgeType;
 
@@ -36,7 +35,7 @@ public class Graph<T> {
      * a suitable type of Map, depending on application needs.
      */
     private Map<Vertex<T>, List<Edge<T>>> edgeList = null;
-    private HashTableContainer<Integer, Vertex<T>> vertices = new HashTableContainer<>();
+    private Hashtable<Integer, Vertex<T>> vertices = new Hashtable<>();
 
     /**
      * Constructor instantiates a suitable Map data structure
@@ -65,7 +64,7 @@ public class Graph<T> {
         // Create an empty list of edges and put the vertex and the empty list to the Map.
         List<Edge<T>> edges = new ArrayList<>();
         edgeList.put(vertex, edges);
-        vertices.add(element.hashCode(), vertex);
+        vertices.put(element.hashCode(), vertex);
 
         return vertex;
     }
@@ -166,6 +165,7 @@ public class Graph<T> {
                 if (null != target) {
                     // search MUST be stopped when the target vertex is found.
                     if (neighborVertex.equals(target)) {
+                        visited.add(neighborVertex);
                         return visited;
                     }
                 }
@@ -211,6 +211,7 @@ public class Graph<T> {
                     if (null != target) {
                         // search MUST be stopped when the target vertex is found.
                         if (neighborVertex.equals(target)) {
+                            visited.add(neighborVertex);
                             return visited;
                         }
                     }
@@ -304,7 +305,7 @@ public class Graph<T> {
      * connected graphs. It does not need to work on disconnected graphs when starting
      * from the given vertex.
      *
-     * @param isDirected If true graph is directed.
+     * @param edgeType Type of the edge, undirected or directed.
      * @param fromVertex Start looking from this vertex. If null, starts from first vertex in adjacency list.
      * @return Returns true if the graph has cycles.
      */
@@ -443,7 +444,7 @@ public class Graph<T> {
 
     /**
      * Finds a route to a destination using paths already constructed.
-     * Before calling this method, call {@link shortestPathsFrom} to construct
+     * Before calling this method, call {@link #shortestPathsFrom(Vertex)} to construct
      * the paths from the starting vertex of Dijkstra algorithm.
      * <p>
      * A helper method for implementing the Dijkstra algorithm.
@@ -483,12 +484,12 @@ public class Graph<T> {
     /**
      * Finds the shortest paths in the graph from the starting vertex.
      * <p>
-     * In doing Dijkstra, first call this method, then call {@link route}
+     * In doing Dijkstra, first call this method, then call {@link #route(Vertex, Map)}
      * with the paths collected using this method, to get the shortest path to the destination.
      *
      * @param start The starting vertex for the path searching.
      * @return Returns the visits from the starting vertex.
-     * @see oy.tol.tira.graph.Graph#route(Vertex, Map)
+     * @see #route(Vertex, Map)
      */
     private Map<Vertex<T>, Visit<T>> shortestPathsFrom(Vertex<T> start) {
         Visit<T> visit = new Visit<>();
@@ -544,10 +545,10 @@ public class Graph<T> {
         // TODO: Student, implement this if you want to (optional task).
     }
 
-    // STUDENTS: TODO: Uncomment the code below and use it as a sample on how
+    // STUDENTS: Uncomment the code below and use it as a sample on how
     // to iterate over vertices and edges in one situation.
     // If you use some other name for your edge list than edgeList, then
-    // rename that in the code below! Otherwise you will have compiler errors.
+    // rename that in the code below! Otherwise, you will have compiler errors.
 
     /**
      * Provides a string representation of the graph, printing  out the vertices and edges.
