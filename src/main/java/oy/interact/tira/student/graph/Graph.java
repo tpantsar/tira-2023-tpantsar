@@ -16,8 +16,7 @@ import java.io.IOException;
  * path finding algorithm.
  * <p>
  * The class needs your attention, dear student. Implement the methods
- * marked TODO in the comments, based on what you have learned about
- * graphs.
+ * marked in the comments, based on what you have learned about graphs.
  * <p>
  * The Graph as a generic (template) class can use any data types conforming to
  * the Comparable interface.
@@ -34,8 +33,8 @@ public class Graph<T> {
      * The edge list of the graph. Select and instantiate
      * a suitable type of Map, depending on application needs.
      */
-    private Map<Vertex<T>, List<Edge<T>>> edgeList = null;
-    private Hashtable<Integer, Vertex<T>> vertices = new Hashtable<>();
+    private Hashtable<Vertex<T>, List<Edge<T>>> edgeList = null;
+    private HashMap<Integer, Vertex<T>> vertices = new HashMap<>();
 
     /**
      * Constructor instantiates a suitable Map data structure

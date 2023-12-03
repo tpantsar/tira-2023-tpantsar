@@ -175,8 +175,8 @@ public class Coder implements Comparable<Coder> {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////
-	// TODO: Students: implement the two methods below following the instructions _carefully_!
-	// Expecially see the note in the class comment above, and the comments below.
+	// Students: implement the two methods below following the instructions _carefully_!
+	// Especially see the note in the class comment above, and the comments below.
 	////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
@@ -231,8 +231,7 @@ public class Coder implements Comparable<Coder> {
 	/**
 	 * You need to implement this in Exercise 8 on hash tables. No need to implement
 	 * this before!
-	 * 
-	 * TODO: Students (task 8): Calculate the hash for the Coder. In this case, the
+	 * Students (task 8): Calculate the hash for the Coder. In this case, the
 	 * hash must be related
 	 * to the unique identity of the coder. Since coders can have a same full name,
 	 * calculate the hash from the permanent id of the Coder, which does not change.

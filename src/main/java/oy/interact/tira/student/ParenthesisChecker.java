@@ -8,7 +8,7 @@ public class ParenthesisChecker {
    }
 
    /**
-    * TODO: Student: Implement this method which checks if the given string has matching opening and closing
+    * Student: Implement this method which checks if the given string has matching opening and closing
     * parentheses. It should check for matching parentheses:
 
     *   Lorem ipsum ( dolor sit {  amet, [ consectetur adipiscing ] elit, sed } do eiusmod tempor ) incididunt ut...,
@@ -73,7 +73,7 @@ public class ParenthesisChecker {
 
            // Check for quotation marks
            if (character == '"') {
-               // While the trailing quoation mark is not found
+               // While the trailing quotation mark is not found
                while (i + 1 < lengthOfString && fromString.charAt(i + 1) != '"') {
                    columnNumber++;
                    i++;

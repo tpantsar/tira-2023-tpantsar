@@ -75,7 +75,7 @@ public class CodeWordsCounter {
 		System.out.println("File: " + file.getAbsolutePath());
 		long start = System.currentTimeMillis();
 		for (int index = 0; index < content.length(); index++) {
-			// STUDENTS: TODO: Implement this pseudocode to fill the hash table with unique word counts
+			// STUDENTS: Implement this pseudocode to fill the hash table with unique word counts
 			// from the source code file.
 			// 1. Get a code point at the index from content.
 			// 2. If the code point is a letter character...

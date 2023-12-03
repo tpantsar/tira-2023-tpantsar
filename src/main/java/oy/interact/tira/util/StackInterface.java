@@ -2,7 +2,7 @@ package oy.interact.tira.util;
 
 /**
  * An interface to stack class holding elements of type E.
- * TODO: Implement this interface in a separate <code>StackImplementation.java</code> file. 
+ * Implement this interface in a separate <code>StackImplementation.java</code> file.
  * 
  */
 public interface StackInterface<E> {
