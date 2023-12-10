@@ -488,6 +488,8 @@ uuteen taulukkoon lisätessä.
 
 ## 09-TASK
 
+**------------------- HOX!!! TOTEUTIN GRAPHVIZ -GRAAFIN MALLINNUKSEN -> Graph.toDotBFS()  -------------------**
+
 Mielestäni vaikeinta tässä harjoituksessa oli leveys- ja syvyyshaun, sekä syklien tunnistus -metodien toteuttaminen.
 Yleisesti metodien toteuttamisessa ja graafi-tietorakenteen ymmärtämisessä auttoivat paljon demovideot, luentokalvojen
 esimerkit sekä C++:lla toteutettu demo-repository junaverkostoista.
