@@ -542,6 +542,63 @@ public class Graph<T> {
      */
     public void toDotBFS(Vertex<T> from, String outputFileName) throws IOException {
         // TODO: Student, implement this if you want to (optional task).
+
+        /*
+        * Käytännössä tämän voi toteuttaa vaikka custom leveyshakuna jossa solmuissa vieraillen tallennetaan solmut ja
+        * reunat GraphViz -tiedostoon, varmistaen aina että jos kaikkia solmuja ei vieläkään ole käyty läpi,
+        * jatketaan jostain ei-vieraillusta solmusta.
+        */
+
+        StringBuilder graphBuilder = new StringBuilder();
+        List<Vertex<T>> vertices = breadthFirstSearch(from, null);
+
+        List<Vertex<T>> visited = new ArrayList<>(); // All visited vertices
+        visited.add(from);
+
+        // Styling
+        graphBuilder.insert(0, "digraph \"CoderFriends\" {\n");
+        graphBuilder.append("   node [shape=circle, style=\"rounded,filled\"]\n");
+        graphBuilder.append("   beautify=true\n");
+        graphBuilder.append("   overlap=\"scale\"\n");
+
+        while (!visited.isEmpty()) {
+
+            // Coders
+            for (Vertex<T> vertex : vertices) {
+                int hash = vertex.hashCode();
+                String fullName = vertex.toString();
+
+                graphBuilder.append("   \"").append(hash).append("\" [label=\"\" tooltip=\"")
+                        .append(fullName).append("\"");
+
+                /*if (isRoot) {
+                    graphBuilder.append(" color=\"antiquewhite\" root=true]\n");
+                } else {
+                    graphBuilder.append("]\n");
+                }*/
+
+                // Coder friends
+                List<Edge<T>> coderFriends = getEdges(vertex);
+
+                for (Edge<T> friend : coderFriends) {
+                    Vertex<T> friendVertex = friend.getSource();
+                    int friendHash = friendVertex.hashCode();
+                    String friendName = friendVertex.toString();
+
+                    graphBuilder.append("   \"").append(hash).append("\" -> \"").append("\"")
+                            .append(friendHash).append("\" [color=gray, tooltip=\"")
+                            .append(fullName).append(" -> ").append(friendName).append("\"]");
+
+
+                }
+            }
+
+        }
+
+
+
+
+        disconnectedVertices(from);
     }
 
     // STUDENTS: Uncomment the code below and use it as a sample on how
