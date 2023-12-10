@@ -1,5 +1,6 @@
 package oy.interact.tira.student.graph;
 
+import java.io.FileWriter;
 import java.util.*;
 
 import oy.interact.tira.student.ArrayQueue;
@@ -304,7 +305,7 @@ public class Graph<T> {
      * connected graphs. It does not need to work on disconnected graphs when starting
      * from the given vertex.
      *
-     * @param edgeType Type of the edge, undirected or directed.
+     * @param edgeType   Type of the edge, undirected or directed.
      * @param fromVertex Start looking from this vertex. If null, starts from first vertex in adjacency list.
      * @return Returns true if the graph has cycles.
      */
@@ -543,62 +544,91 @@ public class Graph<T> {
     public void toDotBFS(Vertex<T> from, String outputFileName) throws IOException {
         // TODO: Student, implement this if you want to (optional task).
 
-        /*
-        * Käytännössä tämän voi toteuttaa vaikka custom leveyshakuna jossa solmuissa vieraillen tallennetaan solmut ja
-        * reunat GraphViz -tiedostoon, varmistaen aina että jos kaikkia solmuja ei vieläkään ole käyty läpi,
-        * jatketaan jostain ei-vieraillusta solmusta.
-        */
-
-        StringBuilder graphBuilder = new StringBuilder();
-        List<Vertex<T>> vertices = breadthFirstSearch(from, null);
-
-        List<Vertex<T>> visited = new ArrayList<>(); // All visited vertices
-        visited.add(from);
+        StringBuilder dotStringBuilder = new StringBuilder();
+        List<Vertex<T>> visited = new ArrayList<>(); // All elements of visited vertices
 
         // Styling
-        graphBuilder.insert(0, "digraph \"CoderFriends\" {\n");
-        graphBuilder.append("   node [shape=circle, style=\"rounded,filled\"]\n");
-        graphBuilder.append("   beautify=true\n");
-        graphBuilder.append("   overlap=\"scale\"\n");
+        dotStringBuilder.insert(0, "digraph \"CoderFriends\" {\n");
+        dotStringBuilder.append("   node [shape=circle, style=\"rounded,filled\"]\n");
+        dotStringBuilder.append("   beautify=true\n");
+        dotStringBuilder.append("   overlap=\"scale\"\n");
 
-        while (!visited.isEmpty()) {
+        boolean isRoot = true;
+        while (true) {
+            List<Vertex<T>> vertices = breadthFirstSearch(from, null);
 
             // Coders
             for (Vertex<T> vertex : vertices) {
+                visited.add(vertex);
                 int hash = vertex.hashCode();
                 String fullName = vertex.toString();
 
-                graphBuilder.append("   \"").append(hash).append("\" [label=\"\" tooltip=\"")
+                dotStringBuilder.append("   \"").append(hash).append("\" [label=\"\" tooltip=\"")
                         .append(fullName).append("\"");
 
-                /*if (isRoot) {
-                    graphBuilder.append(" color=\"antiquewhite\" root=true]\n");
+                if (isRoot) {
+                    dotStringBuilder.append(" color=\"antiquewhite\" root=true]\n");
+                    isRoot = false;
                 } else {
-                    graphBuilder.append("]\n");
-                }*/
+                    dotStringBuilder.append("]\n");
+                }
 
                 // Coder friends
                 List<Edge<T>> coderFriends = getEdges(vertex);
-
                 for (Edge<T> friend : coderFriends) {
-                    Vertex<T> friendVertex = friend.getSource();
+                    Vertex<T> friendVertex = friend.getDestination();
                     int friendHash = friendVertex.hashCode();
                     String friendName = friendVertex.toString();
 
-                    graphBuilder.append("   \"").append(hash).append("\" -> \"").append("\"")
+                    dotStringBuilder.append("      \"").append(hash).append("\" -> \"")
                             .append(friendHash).append("\" [color=gray, tooltip=\"")
-                            .append(fullName).append(" -> ").append(friendName).append("\"]");
-
-
+                            .append(fullName).append(" -> ").append(friendName).append("\"]\n");
                 }
             }
 
+            List<T> disconnectedVertices = disconnectedVertices(from);
+
+            // If there are not visited vertices in disconnected vertices,
+            // then pick one of the non visited vertices to be the new starting vertex (from).
+            if (disconnectedVertices.isEmpty()) {
+                break;
+            } else {
+                isRoot = true; // First vertex of the disconnected graph will be emphasized
+                boolean allElementsVisited = true;
+
+                // Populate a new ArrayList for comparing visited elements
+                List<T> visitedElements = new ArrayList<>();
+                for (Vertex<T> vertexOfVisitedElement : visited) {
+                    visitedElements.add(vertexOfVisitedElement.getElement());
+                }
+
+                for (T disconnectedVertex : disconnectedVertices) {
+                    if (!visitedElements.contains(disconnectedVertex)) {
+                        from = getVertexFor(disconnectedVertex);
+                        allElementsVisited = false;
+                        break;
+                    }
+                }
+
+                if (allElementsVisited) { // All elements are visited
+                    break;
+                }
+            }
         }
 
+        // Closing bracket to the end of file "}"
+        dotStringBuilder.append("}");
 
+        // Write to a file
+        try {
+            FileWriter fileWriter = new FileWriter(outputFileName);
+            fileWriter.write(dotStringBuilder.toString());
+            fileWriter.close();
+            System.out.println("Dot file generated successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-
-        disconnectedVertices(from);
     }
 
     // STUDENTS: Uncomment the code below and use it as a sample on how
